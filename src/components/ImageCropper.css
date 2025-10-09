@@ -1,0 +1,79 @@
+.cropper-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.cropper-content {
+  background: white;
+  border-radius: 12px;
+  padding: 28px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.cropper-content h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.2px;
+}
+
+.cropper-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+.cropper-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.button-primary,
+.button-secondary {
+  padding: 11px 22px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.button-primary {
+  background: #09C285;
+  color: white;
+}
+
+.button-primary:hover {
+  background: #08a770;
+  box-shadow: 0 2px 8px rgba(9, 194, 133, 0.25);
+}
+
+.button-secondary {
+  background: #f9fafb;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.button-secondary:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}

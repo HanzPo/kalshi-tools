@@ -1,0 +1,37 @@
+.app {
+  min-height: 100vh;
+  padding: 24px;
+  background: #fafafa;
+}
+
+.app-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.preview-section {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+@media (max-width: 1024px) {
+  .app-container {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app {
+    padding: 16px;
+  }
+
+  .app-container {
+    gap: 20px;
+  }
+}
