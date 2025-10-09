@@ -94,7 +94,7 @@ export function ControlPanel({
           <span>100%</span>
         </div>
         {config.customTrendData && (
-          <p className="help-text" style={{ color: '#ef4444', marginTop: '8px' }}>
+          <p className="help-text" style={{ color: '#D91616', marginTop: '8px' }}>
             ⚠️ Adjusting odds will reset your custom trend
           </p>
         )}

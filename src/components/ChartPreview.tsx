@@ -23,7 +23,7 @@ export function ChartPreview({ config, data }: ChartPreviewProps) {
   const changeValue = parseFloat(change);
   const isPositive = changeValue >= 0;
   
-  const chartColor = '#09C285';
+  const chartColor = isPositive ? '#09C285' : '#D91616';
   const bgColor = '#ffffff';
   const textColor = '#000000';
   const secondaryTextColor = '#6b7280';
@@ -79,14 +79,14 @@ export function ChartPreview({ config, data }: ChartPreviewProps) {
           <span
             className="odds-change"
             style={{
-              color: isPositive ? chartColor : '#dc2626',
+              color: isPositive ? chartColor : '#D91616',
             }}
           >
             {isPositive ? '▲' : '▼'} {Math.abs(changeValue).toFixed(1)}
           </span>
         </div>
         <div className="platform-logo">
-          <svg width="63" height="16" viewBox="0 0 78 20" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color: chartColor }}>
+          <svg width="63" height="16" viewBox="0 0 78 20" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color: '#09C285' }}>
             <path d="M40.1043 0H36.0332V19.9986H40.1043V0Z" fill="currentColor" fillOpacity="0.9"></path>
             <path d="M0.416887 0.0221237H4.73849V8.99348L12.818 0.0221237H18.0582L10.6468 8.24586L18.5384 20H13.3608L7.59868 11.5686L4.73849 14.7459V20H0.416887V0.0221237Z" fill="currentColor"></path>
             <path fillRule="evenodd" clipRule="evenodd" d="M34.4675 19.8117H32.4007C30.5426 19.8117 29.624 19.0017 29.6658 17.4027C29.1229 18.2334 28.4549 18.8771 27.6824 19.3132C26.8891 19.7494 25.9496 19.9778 24.8222 19.9778C23.1729 19.9778 21.8368 19.604 20.8138 18.8564C19.8117 18.088 19.3106 17.0289 19.3106 15.6582C19.3106 14.1007 19.8952 12.8962 21.0434 12.0656C22.2126 11.2141 23.9036 10.778 26.1166 10.778H29.0603V10.0719C29.0603 9.40737 28.8098 8.8882 28.3087 8.49362C27.8077 8.09905 27.1396 7.89138 26.2836 7.89138C25.532 7.89138 24.9266 8.05752 24.4464 8.36902C23.9662 8.70129 23.674 9.1374 23.5905 9.67734H19.6446C19.7699 8.18212 20.4589 7.01916 21.6697 6.18848C22.8806 5.3578 24.4882 4.92169 26.4924 4.92169C28.5801 4.92169 30.2086 5.37857 31.3359 6.29232C32.4842 7.20607 33.0688 8.53516 33.0688 10.2588V15.4298C33.0688 15.7828 33.1523 16.0321 33.2984 16.1774C33.4445 16.302 33.6951 16.3851 34.0291 16.3851H34.4675V19.8117ZM26.0749 13.4569C25.2398 13.4569 24.5717 13.6231 24.0915 13.9761C23.6322 14.3084 23.4026 14.7653 23.4026 15.3675C23.4026 15.8867 23.5905 16.2813 23.9871 16.5928C24.3838 16.9043 24.9266 17.0496 25.5947 17.0496C26.6594 17.0496 27.4945 16.7589 28.1 16.1567C28.7054 15.5544 29.0394 14.7445 29.0603 13.7269V13.4569H26.0749Z" fill="currentColor"></path>
