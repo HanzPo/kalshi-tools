@@ -78,11 +78,8 @@ export function TrendDrawer({ onComplete, onCancel }: TrendDrawerProps) {
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
     
-    const clientX = 'clientX' in e ? e.clientX : e.clientX;
-    const clientY = 'clientY' in e ? e.clientY : e.clientY;
-    
-    const x = (clientX - rect.left) * scaleX;
-    const y = (clientY - rect.top) * scaleY;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
     
     return {
       x: Math.max(0, Math.min(canvas.width, x)),

@@ -1,6 +1,5 @@
 import { DataPoint } from '../types';
 
-const STEPS = 100;
 const DATES_COUNT = 5;
 
 function generateDates(): string[] {
