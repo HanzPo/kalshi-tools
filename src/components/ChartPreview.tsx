@@ -73,7 +73,14 @@ export function ChartPreview({ config, data }: ChartPreviewProps) {
       <div className="odds-section">
         <div className="odds-main">
           <div className="odds-group">
-            <span className="odds-value">{config.currentOdds}%</span>
+            <span 
+              className="odds-value"
+              style={{
+                color: config.currentOdds === 0 ? '#cccccc' : textColor
+              }}
+            >
+              {config.currentOdds === 0 ? '<1' : Math.min(config.currentOdds, 99)}%
+            </span>
             <span className="odds-label">chance</span>
           </div>
           <span
