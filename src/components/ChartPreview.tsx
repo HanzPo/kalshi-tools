@@ -135,7 +135,21 @@ export function ChartPreview({ config, data }: ChartPreviewProps) {
               dataKey="value"
               stroke={chartColor}
               strokeWidth={2.5}
-              dot={false}
+              dot={(props: any) => {
+                // Only show dot on the last point
+                const isLast = props.index === data.length - 1;
+                if (!isLast) return <circle r={0} />;
+                return (
+                  <circle
+                    cx={props.cx}
+                    cy={props.cy}
+                    r={5}
+                    fill={chartColor}
+                    stroke={chartColor}
+                    strokeWidth={3}
+                  />
+                );
+              }}
               activeDot={{ r: 5, fill: chartColor }}
               animationDuration={300}
             />
