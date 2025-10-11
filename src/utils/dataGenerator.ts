@@ -1,18 +1,15 @@
 import { DataPoint } from '../types';
 
-const DATES_COUNT = 5;
+const DATES_COUNT = 6;
 
-function generateDates(): string[] {
+function generateDates(startDate: Date, endDate: Date): string[] {
   const dates: string[] = [];
-  const now = new Date();
-  const threeMonthsAgo = new Date(now);
-  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
   
   // Calculate total milliseconds in the range
-  const totalMs = now.getTime() - threeMonthsAgo.getTime();
+  const totalMs = endDate.getTime() - startDate.getTime();
   
   for (let i = 0; i < DATES_COUNT; i++) {
-    const date = new Date(threeMonthsAgo.getTime() + (totalMs * i / (DATES_COUNT - 1)));
+    const date = new Date(startDate.getTime() + (totalMs * i / (DATES_COUNT - 1)));
     dates.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
   }
   
@@ -29,7 +26,9 @@ function normalRandom(): number {
 function applyMonteCarloToCustomTrend(
   customTrend: number[],
   targetOdds: number,
-  volatility: number
+  volatility: number,
+  startDate: Date,
+  endDate: Date
 ): DataPoint[] {
   const data: number[] = [];
   
@@ -63,7 +62,7 @@ function applyMonteCarloToCustomTrend(
   data[data.length - 1] = targetOdds;
   
   // Convert to DataPoint format
-  const dates = generateDates();
+  const dates = generateDates(startDate, endDate);
   const dataPoints: DataPoint[] = data.map((value, i) => {
     const dateIndex = Math.floor((i / data.length) * (DATES_COUNT - 1));
     return {
@@ -78,11 +77,13 @@ function applyMonteCarloToCustomTrend(
 export function generateMarketData(
   targetOdds: number,
   volatility: number = 1.5,
-  customTrendData: number[] | null = null
+  customTrendData: number[] | null = null,
+  startDate: Date = new Date(new Date().setMonth(new Date().getMonth() - 3)),
+  endDate: Date = new Date()
 ): DataPoint[] {
   // Always use custom trend (or default if none provided)
   if (customTrendData && customTrendData.length > 0) {
-    return applyMonteCarloToCustomTrend(customTrendData, targetOdds, volatility);
+    return applyMonteCarloToCustomTrend(customTrendData, targetOdds, volatility, startDate, endDate);
   }
   
   // If no custom data, return empty data (should not happen in normal flow)

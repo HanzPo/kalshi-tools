@@ -9,13 +9,27 @@ import { generateMarketData, generateVolume } from './utils/dataGenerator';
 import './App.css';
 
 function App() {
+  // Calculate default dates: 3 months ago and today
+  const getDefaultStartDate = () => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - 3);
+    return date;
+  };
+
   const [config, setConfig] = useState<MarketConfig>({
     title: 'Will Taylor Swift occupy all Top 12 spots on the Billboard Hot 100 chart for Oct 18th?',
     image: null,
+    marketType: 'binary',
     currentOdds: 92,
     volume: generateVolume(),
     volatility: 1.5,
     customTrendData: null,
+    outcomes: [
+      { id: '1', name: 'Outcome 1', color: '#09C285', currentOdds: 60, customTrendData: null },
+      { id: '2', name: 'Outcome 2', color: '#3B82F6', currentOdds: 40, customTrendData: null },
+    ],
+    startDate: getDefaultStartDate(),
+    endDate: new Date(),
   });
 
   const [data, setData] = useState<DataPoint[]>([]);
@@ -27,29 +41,67 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Regenerate data when market type changes
+  useEffect(() => {
+    regenerateData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config.marketType]);
+
+  // Regenerate data when outcomes change (added/removed)
+  useEffect(() => {
+    if (config.marketType === 'multi') {
+      regenerateData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config.outcomes.length]);
+
+  function generateDefaultTrend(targetOdds: number): number[] {
+    const defaultTrend: number[] = [];
+    let currentValue = 40 + Math.random() * 20; // Start between 40-60%
+    
+    for (let i = 0; i < 100; i++) {
+      // Random walk with drift toward target
+      const drift = (targetOdds - currentValue) / (100 - i) * 0.2;
+      const randomStep = (Math.random() - 0.5) * 8;
+      currentValue += drift + randomStep;
+      currentValue = Math.max(0, Math.min(100, currentValue));
+      defaultTrend.push(currentValue);
+    }
+    
+    // Ensure it ends near target
+    defaultTrend[99] = targetOdds;
+    return defaultTrend;
+  }
+
   function regenerateData() {
-    if (!config.customTrendData) {
-      // Generate default random walk if no custom data
-      const defaultTrend: number[] = [];
-      let currentValue = 40 + Math.random() * 20; // Start between 40-60%
-      
-      for (let i = 0; i < 100; i++) {
-        // Random walk with drift toward target
-        const drift = (config.currentOdds - currentValue) / (100 - i) * 0.2;
-        const randomStep = (Math.random() - 0.5) * 8;
-        currentValue += drift + randomStep;
-        currentValue = Math.max(0, Math.min(100, currentValue));
-        defaultTrend.push(currentValue);
+    if (config.marketType === 'binary') {
+      // Binary market - single line
+      if (!config.customTrendData) {
+        const defaultTrend = generateDefaultTrend(config.currentOdds);
+        const newData = generateMarketData(config.currentOdds, config.volatility, defaultTrend, config.startDate, config.endDate);
+        setData(newData);
+      } else {
+        const newData = generateMarketData(config.currentOdds, config.volatility, config.customTrendData, config.startDate, config.endDate);
+        setData(newData);
       }
-      
-      // Ensure it ends near target
-      defaultTrend[99] = config.currentOdds;
-      
-      const newData = generateMarketData(config.currentOdds, config.volatility, defaultTrend);
-      setData(newData);
     } else {
-      const newData = generateMarketData(config.currentOdds, config.volatility, config.customTrendData);
-      setData(newData);
+      // Multi-outcome market - multiple lines
+      const baseData = generateMarketData(50, config.volatility, generateDefaultTrend(50), config.startDate, config.endDate);
+      
+      // Generate data for each outcome
+      config.outcomes.forEach((outcome) => {
+        const trend = outcome.customTrendData || generateDefaultTrend(outcome.currentOdds);
+        const outcomeData = generateMarketData(outcome.currentOdds, config.volatility, trend, config.startDate, config.endDate);
+        
+        // Merge outcome data into base data
+        outcomeData.forEach((point, index) => {
+          if (baseData[index]) {
+            baseData[index][`value_${outcome.id}`] = point.value;
+          }
+        });
+      });
+      
+      setData(baseData);
     }
   }
 
@@ -88,11 +140,12 @@ function App() {
       customTrendData: trendData,
       currentOdds: finalOdds
     }));
+    
     setShowTrendDrawer(false);
     
     // Regenerate data with new custom trend
     setTimeout(() => {
-      const newData = generateMarketData(finalOdds, config.volatility, trendData);
+      const newData = generateMarketData(finalOdds, config.volatility, trendData, config.startDate, config.endDate);
       setData(newData);
     }, 0);
   }

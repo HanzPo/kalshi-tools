@@ -17,12 +17,19 @@
   display: flex;
   justify-content: center;
   padding: 20px 0;
+  position: sticky;
+  top: 24px;
+  align-self: start;
 }
 
 @media (max-width: 1024px) {
   .app-container {
     grid-template-columns: 1fr;
     gap: 24px;
+  }
+  
+  .preview-section {
+    position: static;
   }
 }
 
