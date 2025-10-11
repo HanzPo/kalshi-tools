@@ -6,7 +6,7 @@ import { ChartPreview } from './components/ChartPreview';
 import { ImageCropper } from './components/ImageCropper';
 import { TrendDrawer } from './components/TrendDrawer';
 import { generateMarketData, generateVolume } from './utils/dataGenerator';
-import { encodeConfigToUrl, decodeConfigFromUrl } from './utils/urlEncoder';
+import { decodeConfigFromUrl } from './utils/urlEncoder';
 import { getOutcomeColor } from './utils/colorGenerator';
 import './App.css';
 
@@ -225,19 +225,6 @@ function App() {
     } catch (error) {
       console.error('Error copying to clipboard:', error);
       showToast('Failed to copy to clipboard');
-    }
-  }
-
-  async function handleCopyShareLink() {
-    try {
-      const encoded = await encodeConfigToUrl(config);
-      const url = `${window.location.origin}${window.location.pathname}?c=${encoded}`;
-      
-      await navigator.clipboard.writeText(url);
-      showToast('Share link copied to clipboard! 🔗');
-    } catch (error) {
-      console.error('Error copying share link:', error);
-      showToast('Failed to copy share link');
     }
   }
 
