@@ -16,14 +16,14 @@
 
 .chart-title-section {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   flex: 1;
 }
 
 .chart-image {
-  width: 48px;
-  height: 48px;
+  width: 53px;
+  height: 53px;
   border-radius: 8px;
   object-fit: cover;
   flex-shrink: 0;
@@ -36,7 +36,6 @@
   max-width: 650px;
   letter-spacing: -0.2px;
   color: #111827;
-  margin-top: 2px;
 }
 
 .chart-icons {
@@ -160,8 +159,8 @@
   }
 
   .chart-image {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
   }
 
   .odds-value {

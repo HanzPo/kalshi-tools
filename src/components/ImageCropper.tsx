@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import './ImageCropper.css';
@@ -12,15 +12,15 @@ interface ImageCropperProps {
 export function ImageCropper({ imageSrc, onCropComplete, onCancel }: ImageCropperProps) {
   const [crop, setCrop] = useState<Crop>({
     unit: '%',
-    width: 50,
-    height: 50,
-    x: 25,
-    y: 25,
+    width: 100,
+    height: 100,
+    x: 0,
+    y: 0,
   });
   const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
   const imgRef = useRef<HTMLImageElement>(null);
 
-  function getCroppedImg(): string | null {
+  const getCroppedImg = useCallback((): string | null => {
     const image = imgRef.current;
     const pixelCrop = completedCrop;
 
@@ -51,14 +51,14 @@ export function ImageCropper({ imageSrc, onCropComplete, onCancel }: ImageCroppe
     );
 
     return canvas.toDataURL('image/jpeg');
-  }
+  }, [completedCrop]);
 
-  function handleComplete() {
+  const handleComplete = useCallback(() => {
     const croppedImage = getCroppedImg();
     if (croppedImage) {
       onCropComplete(croppedImage);
     }
-  }
+  }, [getCroppedImg, onCropComplete]);
 
   return (
     <div className="cropper-modal">
@@ -71,12 +71,13 @@ export function ImageCropper({ imageSrc, onCropComplete, onCancel }: ImageCroppe
             onComplete={(c) => setCompletedCrop(c)}
             aspect={1}
             circularCrop={false}
+            ruleOfThirds
           >
             <img
               ref={imgRef}
               src={imageSrc}
               alt="Crop preview"
-              style={{ maxWidth: '100%', maxHeight: '60vh' }}
+              style={{ maxWidth: '100%', maxHeight: '60vh', display: 'block' }}
             />
           </ReactCrop>
         </div>

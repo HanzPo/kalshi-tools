@@ -255,6 +255,9 @@ function App() {
         />
         <div className="preview-section">
           <ChartPreview config={config} data={data} />
+          <div className="attribution">
+            <p>Built by <a href="https://x.com/hanznathanpo" target="_blank" rel="noopener noreferrer">Hanz Po</a> • © 2025</p>
+          </div>
         </div>
       </div>
 

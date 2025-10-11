@@ -628,10 +628,6 @@ export function ControlPanel({
           📋 Copy
         </button>
       </div>
-
-      <footer className="panel-footer">
-        <p>Made by <a href="https://hanzpo.com" target="_blank" rel="noopener noreferrer">Hanz Po</a></p>
-      </footer>
     </div>
   );
 }
