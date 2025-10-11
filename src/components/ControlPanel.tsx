@@ -285,19 +285,7 @@ export function ControlPanel({
 
       {config.marketType === 'multi' && (
         <div className="control-group">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <label>Outcomes</label>
-            <span style={{ 
-              fontSize: '13px', 
-              fontWeight: '600',
-              color: '#09C285',
-              backgroundColor: '#ecfdf5',
-              padding: '4px 12px',
-              borderRadius: '6px'
-            }}>
-              Total: {config.outcomes.reduce((sum, o) => sum + o.currentOdds, 0)}%
-            </span>
-          </div>
+          <label>Outcomes</label>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
             {config.outcomes.map((outcome, index) => (
               <div

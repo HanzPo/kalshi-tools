@@ -147,7 +147,7 @@ export function ChartPreview({ config, data }: ChartPreviewProps) {
       {/* Chart */}
       <div className="chart-container">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 10, right: 0, left: 15, bottom: config.marketType === 'multi' ? 10 : 5 }}>
+          <LineChart data={data} margin={{ top: 10, right: 10, left: 25, bottom: config.marketType === 'multi' ? 10 : 5 }}>
             <CartesianGrid
               strokeDasharray="1 4"
               stroke={gridColor}
@@ -158,7 +158,7 @@ export function ChartPreview({ config, data }: ChartPreviewProps) {
             <XAxis
               dataKey="time"
               stroke="transparent"
-              tick={{ fill: secondaryTextColor, fontSize: 13 }}
+              tick={{ fill: secondaryTextColor, fontSize: 13, dx: 20 }}
               axisLine={false}
               tickLine={false}
               tickMargin={10}
