@@ -187,6 +187,37 @@
   text-align: center;
 }
 
+.panel-footer a {
+  color: #09C285;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.panel-footer a:hover {
+  text-decoration: underline;
+}
+
+/* react-colorful overrides */
+.react-colorful {
+  width: 200px;
+  height: 200px;
+}
+
+.react-colorful__saturation {
+  border-radius: 6px 6px 0 0;
+}
+
+.react-colorful__hue {
+  height: 16px;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.react-colorful__pointer {
+  width: 20px;
+  height: 20px;
+}
+
 @media (max-width: 1024px) {
   .control-panel {
     position: static;

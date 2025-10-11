@@ -1,5 +1,7 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useState, DragEvent, useRef, useEffect } from 'react';
+import { HexColorPicker } from 'react-colorful';
 import { MarketConfig, MarketType, Outcome } from '../types';
+import { getOutcomeColor } from '../utils/colorGenerator';
 import './ControlPanel.css';
 
 interface ControlPanelProps {
@@ -9,9 +11,8 @@ interface ControlPanelProps {
   onExport: () => void;
   onRegenerateData: () => void;
   onOpenTrendDrawer: () => void;
+  onCopyToClipboard: () => void;
 }
-
-const OUTCOME_COLORS = ['#09C285', '#4662f5', '#191919'];
 
 export function ControlPanel({
   config,
@@ -20,11 +21,56 @@ export function ControlPanel({
   onExport,
   onRegenerateData,
   onOpenTrendDrawer,
+  onCopyToClipboard,
 }: ControlPanelProps) {
+  const [isDragging, setIsDragging] = useState(false);
+  const [colorPickerOpen, setColorPickerOpen] = useState<string | null>(null);
+  const colorPickerRef = useRef<HTMLDivElement>(null);
+
+  // Close color picker when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+        setColorPickerOpen(null);
+      }
+    }
+
+    if (colorPickerOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [colorPickerOpen]);
+
   function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
       onImageUpload(file);
+    }
+  }
+
+  function handleDragOver(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  }
+
+  function handleDragLeave(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  }
+
+  function handleDrop(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith('image/')) {
+        onImageUpload(file);
+      }
     }
   }
 
@@ -34,8 +80,8 @@ export function ControlPanel({
       onConfigChange({
         marketType,
         outcomes: [
-          { id: '1', name: 'Outcome 1', color: OUTCOME_COLORS[0], currentOdds: 60, customTrendData: null },
-          { id: '2', name: 'Outcome 2', color: OUTCOME_COLORS[1], currentOdds: 40, customTrendData: null },
+          { id: '1', name: 'Outcome 1', color: getOutcomeColor(0), currentOdds: 60, customTrendData: null },
+          { id: '2', name: 'Outcome 2', color: getOutcomeColor(1), currentOdds: 40, customTrendData: null },
         ],
       });
     } else {
@@ -44,40 +90,38 @@ export function ControlPanel({
   }
 
   function handleAddOutcome() {
-    if (config.outcomes.length < 3) {
-      // Calculate fair distribution for new outcome
-      const numOutcomes = config.outcomes.length + 1;
-      const targetPerOutcome = Math.floor(100 / numOutcomes);
-      
-      // Redistribute odds among all outcomes including new one
-      const updatedOutcomes = config.outcomes.map((outcome) => ({
-        ...outcome,
-        currentOdds: targetPerOutcome,
-        customTrendData: null
-      }));
-      
-      const newOutcome: Outcome = {
-        id: String(config.outcomes.length + 1),
-        name: `Outcome ${config.outcomes.length + 1}`,
-        color: OUTCOME_COLORS[config.outcomes.length % OUTCOME_COLORS.length],
-        currentOdds: targetPerOutcome,
-        customTrendData: null,
+    // Calculate fair distribution for new outcome
+    const numOutcomes = config.outcomes.length + 1;
+    const targetPerOutcome = Math.floor(100 / numOutcomes);
+    
+    // Redistribute odds among all outcomes including new one
+    const updatedOutcomes = config.outcomes.map((outcome) => ({
+      ...outcome,
+      currentOdds: targetPerOutcome,
+      customTrendData: null
+    }));
+    
+    const newOutcome: Outcome = {
+      id: String(config.outcomes.length + 1),
+      name: `Outcome ${config.outcomes.length + 1}`,
+      color: getOutcomeColor(config.outcomes.length),
+      currentOdds: targetPerOutcome,
+      customTrendData: null,
+    };
+    
+    const allOutcomes = [...updatedOutcomes, newOutcome];
+    
+    // Handle rounding to ensure sum is 100
+    const currentSum = allOutcomes.reduce((sum, o) => sum + o.currentOdds, 0);
+    if (currentSum !== 100 && allOutcomes.length > 0) {
+      allOutcomes[0] = {
+        ...allOutcomes[0],
+        currentOdds: allOutcomes[0].currentOdds + (100 - currentSum)
       };
-      
-      const allOutcomes = [...updatedOutcomes, newOutcome];
-      
-      // Handle rounding to ensure sum is 100
-      const currentSum = allOutcomes.reduce((sum, o) => sum + o.currentOdds, 0);
-      if (currentSum !== 100 && allOutcomes.length > 0) {
-        allOutcomes[0] = {
-          ...allOutcomes[0],
-          currentOdds: allOutcomes[0].currentOdds + (100 - currentSum)
-        };
-      }
-      
-      onConfigChange({ outcomes: allOutcomes });
-      onRegenerateData();
     }
+    
+    onConfigChange({ outcomes: allOutcomes });
+    onRegenerateData();
   }
 
   function handleRemoveOutcome(outcomeId: string) {
@@ -218,7 +262,7 @@ export function ControlPanel({
           id="market-title"
           type="text"
           className="text-input"
-          placeholder="e.g., Hanz getting a job"
+          placeholder="e.g., Will SpaceX land on Mars by 2030?"
           value={config.title}
           onChange={(e) => onConfigChange({ title: e.target.value })}
         />
@@ -226,14 +270,54 @@ export function ControlPanel({
 
       <div className="control-group">
         <label htmlFor="market-image">Market Image (Optional)</label>
-        <input
-          id="market-image"
-          type="file"
-          accept="image/jpeg,image/png,image/jpg"
-          onChange={handleImageChange}
-          className="file-input"
-        />
-        <p className="help-text">Upload an image for your market</p>
+        <div
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          style={{
+            border: `2px dashed ${isDragging ? '#09C285' : '#d1d5db'}`,
+            borderRadius: '8px',
+            padding: '12px',
+            textAlign: 'center',
+            backgroundColor: isDragging ? '#ecfdf5' : '#f9fafb',
+            transition: 'all 0.2s',
+            cursor: 'pointer',
+            marginBottom: '8px'
+          }}
+        >
+          <input
+            id="market-image"
+            type="file"
+            accept="image/jpeg,image/png,image/jpg"
+            onChange={handleImageChange}
+            className="file-input"
+            style={{ display: 'none' }}
+          />
+          <label
+            htmlFor="market-image"
+            style={{
+              cursor: 'pointer',
+              display: 'block',
+              color: isDragging ? '#09C285' : '#6b7280',
+              fontWeight: '500',
+              fontSize: '14px',
+              lineHeight: '1.5'
+            }}
+          >
+            {isDragging ? (
+              <>
+                <span style={{ verticalAlign: 'middle', marginRight: '6px' }}>📥</span>
+                <span style={{ display: 'inline-block', verticalAlign: 'middle', transform: 'translateY(4px)' }}>Drop image here</span>
+              </>
+            ) : (
+              <>
+                <span style={{ verticalAlign: 'middle', marginRight: '6px' }}>📷</span>
+                <span style={{ display: 'inline-block', verticalAlign: 'middle', transform: 'translateY(2px)' }}>Click to upload or drag & drop</span>
+              </>
+            )}
+          </label>
+        </div>
+        <p className="help-text">Supports JPG, PNG formats</p>
       </div>
 
       <div className="control-group">
@@ -298,15 +382,43 @@ export function ControlPanel({
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <div
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      borderRadius: '4px',
-                      backgroundColor: outcome.color,
-                      flexShrink: 0,
-                    }}
-                  />
+                  <div style={{ position: 'relative' }}>
+                    <button
+                      type="button"
+                      onClick={() => setColorPickerOpen(colorPickerOpen === outcome.id ? null : outcome.id)}
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        backgroundColor: outcome.color,
+                        border: '2px solid #e5e7eb',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        flexShrink: 0,
+                        padding: 0,
+                      }}
+                      title="Choose color"
+                    />
+                    {colorPickerOpen === outcome.id && (
+                      <div
+                        ref={colorPickerRef}
+                        style={{
+                          position: 'absolute',
+                          top: '40px',
+                          left: 0,
+                          zIndex: 1000,
+                          backgroundColor: 'white',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                          padding: '12px',
+                        }}
+                      >
+                        <HexColorPicker
+                          color={outcome.color}
+                          onChange={(color) => handleOutcomeChange(outcome.id, { color })}
+                        />
+                      </div>
+                    )}
+                  </div>
                   <input
                     type="text"
                     value={outcome.name}
@@ -354,25 +466,23 @@ export function ControlPanel({
               </div>
             ))}
           </div>
-          {config.outcomes.length < 3 && (
-            <button
-              onClick={handleAddOutcome}
-              style={{
-                width: '100%',
-                padding: '10px',
-                marginTop: '12px',
-                border: '2px dashed #d1d5db',
-                backgroundColor: 'white',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#6b7280',
-              }}
-            >
-              + Add Outcome
-            </button>
-          )}
+          <button
+            onClick={handleAddOutcome}
+            style={{
+              width: '100%',
+              padding: '10px',
+              marginTop: '12px',
+              border: '2px dashed #d1d5db',
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+              color: '#6b7280',
+            }}
+          >
+            + Add Outcome
+          </button>
         </div>
       )}
 
@@ -502,9 +612,22 @@ export function ControlPanel({
         🎲 Regenerate Data
       </button>
 
-      <button onClick={onExport} className="button-export">
-        📥 Export as PNG
-      </button>
+      <div style={{ display: 'flex', gap: '8px' }}>
+        <button 
+          onClick={onExport} 
+          className="button-export"
+          style={{ flex: 1 }}
+        >
+          📥 Export as PNG
+        </button>
+        <button 
+          onClick={onCopyToClipboard} 
+          className="button-export"
+          style={{ flex: 1 }}
+        >
+          📋 Copy
+        </button>
+      </div>
 
       <footer className="panel-footer">
         <p>Made by <a href="https://hanzpo.com" target="_blank" rel="noopener noreferrer">Hanz Po</a></p>

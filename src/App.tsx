@@ -6,6 +6,8 @@ import { ChartPreview } from './components/ChartPreview';
 import { ImageCropper } from './components/ImageCropper';
 import { TrendDrawer } from './components/TrendDrawer';
 import { generateMarketData, generateVolume } from './utils/dataGenerator';
+import { encodeConfigToUrl, decodeConfigFromUrl } from './utils/urlEncoder';
+import { getOutcomeColor } from './utils/colorGenerator';
 import './App.css';
 
 function App() {
@@ -17,7 +19,7 @@ function App() {
   };
 
   const [config, setConfig] = useState<MarketConfig>({
-    title: 'Will Taylor Swift occupy all Top 12 spots on the Billboard Hot 100 chart for Oct 18th?',
+    title: 'Will Donald Trump win the 2024 US Presidential Election?',
     image: null,
     marketType: 'binary',
     currentOdds: 92,
@@ -25,8 +27,8 @@ function App() {
     volatility: 1.5,
     customTrendData: null,
     outcomes: [
-      { id: '1', name: 'Outcome 1', color: '#09C285', currentOdds: 60, customTrendData: null },
-      { id: '2', name: 'Outcome 2', color: '#3B82F6', currentOdds: 40, customTrendData: null },
+      { id: '1', name: 'Outcome 1', color: getOutcomeColor(0), currentOdds: 60, customTrendData: null },
+      { id: '2', name: 'Outcome 2', color: getOutcomeColor(1), currentOdds: 40, customTrendData: null },
     ],
     startDate: getDefaultStartDate(),
     endDate: new Date(),
@@ -35,6 +37,30 @@ function App() {
   const [data, setData] = useState<DataPoint[]>([]);
   const [cropperImage, setCropperImage] = useState<string | null>(null);
   const [showTrendDrawer, setShowTrendDrawer] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  function showToast(message: string) {
+    setToastMessage(message);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 2000);
+  }
+
+  // Load config from URL if present
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedConfig = urlParams.get('c');
+    
+    if (sharedConfig) {
+      decodeConfigFromUrl(sharedConfig)
+        .then((decodedConfig) => {
+          setConfig((prev) => ({ ...prev, ...decodedConfig }));
+        })
+        .catch((error) => {
+          console.error('Failed to decode shared config:', error);
+        });
+    }
+  }, []);
 
   useEffect(() => {
     regenerateData();
@@ -174,6 +200,47 @@ function App() {
     }
   }
 
+  async function handleCopyToClipboard() {
+    const element = document.getElementById('chart-preview');
+    if (!element) return;
+
+    try {
+      const dataUrl = await toPng(element, {
+        quality: 1,
+        pixelRatio: 2,
+      });
+
+      // Convert data URL to blob
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+
+      // Copy to clipboard
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          [blob.type]: blob,
+        }),
+      ]);
+
+      showToast('Chart copied to clipboard! 📋');
+    } catch (error) {
+      console.error('Error copying to clipboard:', error);
+      showToast('Failed to copy to clipboard');
+    }
+  }
+
+  async function handleCopyShareLink() {
+    try {
+      const encoded = await encodeConfigToUrl(config);
+      const url = `${window.location.origin}${window.location.pathname}?c=${encoded}`;
+      
+      await navigator.clipboard.writeText(url);
+      showToast('Share link copied to clipboard! 🔗');
+    } catch (error) {
+      console.error('Error copying share link:', error);
+      showToast('Failed to copy share link');
+    }
+  }
+
   return (
     <div className="app">
       <div className="app-container">
@@ -184,6 +251,7 @@ function App() {
           onExport={handleExport}
           onRegenerateData={regenerateData}
           onOpenTrendDrawer={handleOpenTrendDrawer}
+          onCopyToClipboard={handleCopyToClipboard}
         />
         <div className="preview-section">
           <ChartPreview config={config} data={data} />
@@ -203,6 +271,12 @@ function App() {
           onComplete={handleTrendDrawComplete}
           onCancel={handleTrendDrawCancel}
         />
+      )}
+
+      {toastMessage && (
+        <div className="toast">
+          {toastMessage}
+        </div>
       )}
     </div>
   );

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+message Outcome {
+  string id = 1;
+  string name = 2;
+  string color = 3;
+  int32 currentOdds = 4;
+  repeated double customTrendData = 5;
+}
+
+message MarketConfig {
+  string title = 1;
+  string image = 2;
+  string marketType = 3;
+  int32 currentOdds = 4;
+  int32 volume = 5;
+  double volatility = 6;
+  repeated double customTrendData = 7;
+  repeated Outcome outcomes = 8;
+  int64 startDate = 9;
+  int64 endDate = 10;
+}
+
