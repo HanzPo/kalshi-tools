@@ -124,7 +124,7 @@ export function ChartPreview({ config, data }: ChartPreviewProps) {
                     {outcome.name}
                   </span>
                   <span style={{ fontSize: '16px', fontWeight: '600', color: textColor }}>
-                    {outcome.currentOdds === 0 ? '<1' : Math.min(outcome.currentOdds, 99)}%
+                    {outcome.currentOdds === 0 ? '1' : Math.min(outcome.currentOdds, 99)}%
                   </span>
                 </div>
               ))}
