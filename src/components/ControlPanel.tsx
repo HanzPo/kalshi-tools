@@ -251,9 +251,9 @@ export function ControlPanel({
 
   return (
     <div className="control-panel">
-      <h1 className="panel-title">Market Maker</h1>
+      <h1 className="panel-title">Fake Kalshi</h1>
       <p className="panel-subtitle">
-        Create realistic prediction market charts
+        Create realistic Kalshi charts
       </p>
 
       <div className="control-group">
@@ -606,6 +606,25 @@ export function ControlPanel({
           min={config.startDate.toISOString().split('T')[0]}
         />
         <p className="help-text">Chart end date (default: today)</p>
+      </div>
+
+      <div className="control-group">
+        <label htmlFor="show-watermark" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+          <input
+            id="show-watermark"
+            type="checkbox"
+            checked={config.showWatermark}
+            onChange={(e) => onConfigChange({ showWatermark: e.target.checked })}
+            style={{
+              width: '18px',
+              height: '18px',
+              cursor: 'pointer',
+              accentColor: '#09C285',
+            }}
+          />
+          <span>Show Watermark</span>
+        </label>
+        <p className="help-text">Display "fakekalshi.com" at bottom of chart</p>
       </div>
 
       <button onClick={onRegenerateData} className="button-regenerate">

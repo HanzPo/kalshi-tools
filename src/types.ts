@@ -19,6 +19,7 @@ export interface MarketConfig {
   outcomes: Outcome[];
   startDate: Date;
   endDate: Date;
+  showWatermark: boolean;
 }
 
 export interface DataPoint {

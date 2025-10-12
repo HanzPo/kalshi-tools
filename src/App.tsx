@@ -32,6 +32,7 @@ function App() {
     ],
     startDate: getDefaultStartDate(),
     endDate: new Date(),
+    showWatermark: true,
   });
 
   const [data, setData] = useState<DataPoint[]>([]);

@@ -256,6 +256,22 @@ export function ChartPreview({ config, data }: ChartPreviewProps) {
           ))}
         </div>
       </div>
+
+      {/* Watermark */}
+      {config.showWatermark && (
+        <div 
+          style={{
+            textAlign: 'center',
+            padding: '8px 0 12px 0',
+            fontSize: '11px',
+            color: '#9ca3af',
+            fontWeight: '400',
+            letterSpacing: '0.025em',
+          }}
+        >
+          fakekalshi.com
+        </div>
+      )}
     </div>
   );
 }
