@@ -25,6 +25,7 @@ export function ControlPanel({
 }: ControlPanelProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [colorPickerOpen, setColorPickerOpen] = useState<string | null>(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const colorPickerRef = useRef<HTMLDivElement>(null);
 
   // Close color picker when clicking outside
@@ -557,77 +558,121 @@ export function ControlPanel({
       </div>
 
       <div className="control-group">
-        <label htmlFor="volume">Volume</label>
-        <input
-          id="volume"
-          type="number"
-          className="text-input"
-          placeholder="e.g., 528110"
-          value={config.volume}
-          onChange={(e) => {
-            const value = parseInt(e.target.value) || 0;
-            onConfigChange({ volume: value });
+        <button
+          onClick={() => setShowAdvanced(!showAdvanced)}
+          style={{
+            width: '100%',
+            padding: '12px',
+            border: '1px solid #e5e7eb',
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '600',
+            color: '#374151',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            transition: 'all 0.2s',
           }}
-          min="0"
-          step="1000"
-        />
-        <p className="help-text">Enter amount (e.g., 528110)</p>
+        >
+          <span>⚙️ Advanced Settings</span>
+          <span style={{ 
+            transform: showAdvanced ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.2s',
+            fontSize: '12px'
+          }}>
+            ▼
+          </span>
+        </button>
       </div>
 
-      <div className="control-group">
-        <label htmlFor="start-date">Start Date</label>
-        <input
-          id="start-date"
-          type="date"
-          className="text-input"
-          value={config.startDate.toISOString().split('T')[0]}
-          onChange={(e) => {
-            const newDate = new Date(e.target.value);
-            onConfigChange({ startDate: newDate });
-            onRegenerateData();
-          }}
-          max={config.endDate.toISOString().split('T')[0]}
-        />
-        <p className="help-text">Chart start date (default: 3 months ago)</p>
-      </div>
+      {showAdvanced && (
+        <div style={{
+          border: '1px solid #e5e7eb',
+          borderRadius: '8px',
+          padding: '16px',
+          backgroundColor: '#f9fafb',
+          marginTop: '-8px',
+        }}>
+          <div className="control-group">
+            <label htmlFor="volume">Volume</label>
+            <input
+              id="volume"
+              type="number"
+              className="text-input"
+              placeholder="e.g., 528110"
+              value={config.volume}
+              onChange={(e) => {
+                const value = parseInt(e.target.value) || 0;
+                onConfigChange({ volume: value });
+              }}
+              min="0"
+              step="1000"
+            />
+            <p className="help-text">Enter amount (e.g., 528110)</p>
+          </div>
 
-      <div className="control-group">
-        <label htmlFor="end-date">End Date</label>
-        <input
-          id="end-date"
-          type="date"
-          className="text-input"
-          value={config.endDate.toISOString().split('T')[0]}
-          onChange={(e) => {
-            const newDate = new Date(e.target.value);
-            onConfigChange({ endDate: newDate });
-            onRegenerateData();
-          }}
-          min={config.startDate.toISOString().split('T')[0]}
-        />
-        <p className="help-text">Chart end date (default: today)</p>
-      </div>
+          <div className="control-group">
+            <label htmlFor="start-date">Start Date</label>
+            <input
+              id="start-date"
+              type="date"
+              className="text-input"
+              value={config.startDate.toISOString().split('T')[0]}
+              onChange={(e) => {
+                const newDate = new Date(e.target.value);
+                onConfigChange({ startDate: newDate });
+                onRegenerateData();
+              }}
+              max={config.endDate.toISOString().split('T')[0]}
+            />
+            <p className="help-text">Chart start date (default: 3 months ago)</p>
+          </div>
 
-      <div className="control-group">
-        <label htmlFor="show-watermark" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-          <input
-            id="show-watermark"
-            type="checkbox"
-            checked={config.showWatermark}
-            onChange={(e) => onConfigChange({ showWatermark: e.target.checked })}
-            style={{
-              width: '18px',
-              height: '18px',
-              cursor: 'pointer',
-              accentColor: '#09C285',
-            }}
-          />
-          <span>Show Watermark</span>
-        </label>
-        <p className="help-text">Display "fakekalshi.com" at bottom of chart</p>
-      </div>
+          <div className="control-group">
+            <label htmlFor="end-date">End Date</label>
+            <input
+              id="end-date"
+              type="date"
+              className="text-input"
+              value={config.endDate.toISOString().split('T')[0]}
+              onChange={(e) => {
+                const newDate = new Date(e.target.value);
+                onConfigChange({ endDate: newDate });
+                onRegenerateData();
+              }}
+              min={config.startDate.toISOString().split('T')[0]}
+            />
+            <p className="help-text">Chart end date (default: today)</p>
+          </div>
 
-      <button onClick={onRegenerateData} className="button-regenerate">
+          <div className="control-group" style={{ marginBottom: 0 }}>
+            <label htmlFor="show-watermark" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <input
+                id="show-watermark"
+                type="checkbox"
+                checked={config.showWatermark}
+                onChange={(e) => onConfigChange({ showWatermark: e.target.checked })}
+                style={{
+                  width: '18px',
+                  height: '18px',
+                  cursor: 'pointer',
+                  accentColor: '#09C285',
+                }}
+              />
+              <span>Show Watermark</span>
+            </label>
+            <p className="help-text">Display "fakekalshi.com" at bottom of chart</p>
+          </div>
+        </div>
+      )}
+
+      <button 
+        onClick={onRegenerateData} 
+        className="button-regenerate"
+        style={{ marginTop: '24px' }}
+      >
         🎲 Regenerate Data
       </button>
 
