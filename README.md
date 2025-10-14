@@ -1,19 +1,23 @@
-# Market Maker
+# Kalshi Tools
 
-A web-based tool for generating realistic-looking (but fake) prediction market charts for entertainment, social media content, and memes.
+Professional tools for Kalshi prediction markets. Create custom prediction market charts for analysis, content creation, and visualization.
 
 ## Features
 
 - **Simple Interface**: Single-page app with easy-to-use controls
-- **Authentic Design**: Mimics popular platforms like Kalshi and Polymarket
+- **Professional Design**: High-quality Kalshi-style charts
 - **Full Customization**:
   - Custom market title
   - Image upload with square cropping
-  - Platform style selection (Kalshi or Polymarket)
-  - Data trend patterns (increasing, decreasing, volatile, etc.)
+  - Binary and multi-outcome markets
+  - Draw custom trend lines
   - Adjustable final odds (1-99%)
   - Customizable volume display
-- **Monte Carlo Simulation**: Generates realistic-looking chart data
+  - Date range selection
+- **Advanced Features**: 
+  - Interactive trend drawing
+  - URL sharing for collaboration
+  - Copy to clipboard
 - **Export to PNG**: Download your creation as a high-quality image
 
 ## Getting Started
@@ -48,21 +52,13 @@ The built files will be in the `dist` directory.
 
 1. **Enter a Market Title**: Type your prediction market question
 2. **Upload an Image** (optional): Choose an image and crop it to square
-3. **Select Platform Style**: Choose between Kalshi or Polymarket theme
-4. **Choose Data Trend**: Select how the chart should look (increasing, volatile, etc.)
+3. **Select Market Type**: Choose between binary or multi-outcome markets
+4. **Draw Custom Trends**: Use the trend drawer to create custom price movements
 5. **Set Current Odds**: Use the slider to set the final probability
 6. **Adjust Volume**: Customize the volume display
-7. **Regenerate**: Click the dice button to generate new random data
-8. **Export**: Download your chart as a PNG image
-
-## Data Trends
-
-- **Steadily Increasing**: Clear upward trend with minor fluctuations
-- **Steadily Decreasing**: Clear downward trend with minor fluctuations
-- **Highly Volatile**: Sharp peaks and troughs
-- **Random Walk**: No discernible long-term trend
-- **Sudden Spike**: Mostly stable, then sharp increase
-- **Sudden Crash**: Mostly stable, then sharp decrease
+7. **Set Date Range**: Choose start and end dates for your chart
+8. **Export**: Download your chart as a PNG image or copy to clipboard
+9. **Share**: Share your configuration via URL
 
 ## Technology Stack
 
@@ -75,7 +71,7 @@ The built files will be in the `dist` directory.
 
 ## Disclaimer
 
-This tool is for entertainment purposes only. All generated charts are fake and should not be used for any financial decisions or misrepresented as real data.
+This tool is for visualization and content creation purposes. Charts should be clearly labeled as custom-generated content.
 
 ## License
 

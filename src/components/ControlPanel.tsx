@@ -252,9 +252,9 @@ export function ControlPanel({
 
   return (
     <div className="control-panel">
-      <h1 className="panel-title">Fake Kalshi</h1>
+      <h1 className="panel-title">Kalshi Tools</h1>
       <p className="panel-subtitle">
-        Create realistic Kalshi charts
+        Professional chart generator for prediction markets
       </p>
 
       <div className="control-group">
@@ -663,7 +663,7 @@ export function ControlPanel({
               />
               <span>Show Watermark</span>
             </label>
-            <p className="help-text">Display "fakekalshi.com" at bottom of chart</p>
+            <p className="help-text">Display "kalshi.tools" at bottom of chart</p>
           </div>
         </div>
       )}

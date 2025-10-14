@@ -1,4 +1,4 @@
-# Market Maker - Feature Implementation
+# Kalshi Tools - Feature Implementation
 
 ## ✅ Completed Features
 

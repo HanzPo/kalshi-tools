@@ -269,7 +269,7 @@ export function ChartPreview({ config, data }: ChartPreviewProps) {
             letterSpacing: '0.025em',
           }}
         >
-          fakekalshi.com
+          kalshi.tools
         </div>
       )}
     </div>
