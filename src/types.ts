@@ -28,3 +28,12 @@ export interface DataPoint {
   [key: string]: string | number; // Allow dynamic outcome keys like value_outcome1, value_outcome2
 }
 
+export interface BetSlipConfig {
+  title: string;
+  image: string | null;
+  wager: number;
+  odds: number;
+  answer: string;
+  showWatermark: boolean;
+}
+

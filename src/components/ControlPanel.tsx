@@ -12,6 +12,7 @@ interface ControlPanelProps {
   onRegenerateData: () => void;
   onOpenTrendDrawer: () => void;
   onCopyToClipboard: () => void;
+  onBack?: () => void;
 }
 
 export function ControlPanel({
@@ -22,6 +23,7 @@ export function ControlPanel({
   onRegenerateData,
   onOpenTrendDrawer,
   onCopyToClipboard,
+  onBack,
 }: ControlPanelProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [colorPickerOpen, setColorPickerOpen] = useState<string | null>(null);
@@ -252,7 +254,12 @@ export function ControlPanel({
 
   return (
     <div className="control-panel">
-      <h1 className="panel-title">Kalshi Tools</h1>
+      {onBack && (
+        <button onClick={onBack} className="back-button-control-panel">
+          ← Back
+        </button>
+      )}
+      <h1 className="panel-title">Chart Maker</h1>
       <p className="panel-subtitle">
         Realistic chart generator for Kalshi markets
       </p>

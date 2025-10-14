@@ -9,6 +9,23 @@
   top: 20px;
 }
 
+.back-button-control-panel {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+  margin: -8px 0 12px -8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.back-button-control-panel:hover {
+  background: #f3f4f6;
+  color: #000000;
+}
+
 .panel-title {
   font-size: 32px;
   font-weight: 700;
@@ -218,23 +235,160 @@
   height: 20px;
 }
 
+/* Tablet and smaller screens */
 @media (max-width: 1024px) {
   .control-panel {
     position: static;
     margin-bottom: 20px;
+    padding: clamp(24px, 4vw, 32px);
   }
-}
-
-@media (max-width: 768px) {
-  .control-panel {
-    padding: 24px;
-  }
-
+  
   .panel-title {
-    font-size: 26px;
+    font-size: clamp(26px, 5vw, 32px);
   }
   
   .panel-subtitle {
+    font-size: clamp(14px, 2.5vw, 15px);
+  }
+  
+  .control-group {
+    margin-bottom: clamp(20px, 3vw, 28px);
+  }
+}
+
+/* Mobile landscape and small tablets */
+@media (max-width: 768px) {
+  .control-panel {
+    padding: clamp(20px, 3vw, 24px);
+    margin-bottom: 16px;
+  }
+
+  .panel-title {
+    font-size: clamp(24px, 4.5vw, 26px);
+    margin-bottom: clamp(6px, 1vw, 8px);
+  }
+  
+  .panel-subtitle {
+    font-size: clamp(13px, 2vw, 14px);
+    margin-bottom: clamp(24px, 4vw, 32px);
+  }
+  
+  .control-group {
+    margin-bottom: clamp(16px, 2.5vw, 20px);
+  }
+  
+  .control-group label {
+    font-size: clamp(13px, 2vw, 14px);
+    margin-bottom: clamp(8px, 1.5vw, 10px);
+  }
+  
+  .text-input,
+  .select-input {
+    padding: clamp(10px, 2vw, 11px) clamp(12px, 2.5vw, 14px);
+    font-size: clamp(14px, 2.5vw, 15px);
+  }
+  
+  .help-text {
+    font-size: clamp(12px, 2vw, 13px);
+    margin-top: clamp(4px, 1vw, 6px);
+  }
+  
+  .button-regenerate,
+  .button-export,
+  .button-draw {
+    padding: clamp(10px, 2vw, 12px);
+    font-size: clamp(14px, 2.5vw, 15px);
+    margin-bottom: clamp(10px, 2vw, 12px);
+  }
+}
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+  .control-panel {
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  
+  .panel-title {
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+  
+  .panel-subtitle {
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  
+  .control-group {
+    margin-bottom: 16px;
+  }
+  
+  .control-group label {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  
+  .text-input,
+  .select-input {
+    padding: 10px 12px;
     font-size: 14px;
+  }
+  
+  .help-text {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  
+  .button-regenerate,
+  .button-export,
+  .button-draw {
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  
+  /* File upload area adjustments for mobile */
+  .control-group div[style*="border: 2px dashed"] {
+    padding: 10px !important;
+    margin-bottom: 6px !important;
+  }
+  
+  .control-group div[style*="border: 2px dashed"] label {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  .control-panel {
+    padding: 12px;
+  }
+  
+  .panel-title {
+    font-size: 20px;
+  }
+  
+  .panel-subtitle {
+    font-size: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .control-group {
+    margin-bottom: 14px;
+  }
+  
+  .text-input,
+  .select-input {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  
+  .button-regenerate,
+  .button-export,
+  .button-draw {
+    padding: 8px;
+    font-size: 13px;
+    margin-bottom: 8px;
   }
 }

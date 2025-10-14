@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react';
 import { toPng } from 'html-to-image';
-import { MarketConfig, DataPoint } from './types';
+import { MarketConfig, DataPoint, BetSlipConfig } from './types';
 import { ControlPanel } from './components/ControlPanel';
 import { ChartPreview } from './components/ChartPreview';
 import { ImageCropper } from './components/ImageCropper';
 import { TrendDrawer } from './components/TrendDrawer';
+import { LandingPage } from './components/LandingPage';
+import { BetSlipMaker } from './components/BetSlipMaker';
+import { BetSlipPreview } from './components/BetSlipPreview';
 import { generateMarketData, generateVolume } from './utils/dataGenerator';
 import { decodeConfigFromUrl } from './utils/urlEncoder';
 import { getOutcomeColor } from './utils/colorGenerator';
 import './App.css';
+
+type ViewMode = 'landing' | 'chart' | 'betslip';
 
 function App() {
   // Calculate default dates: 3 months ago and today
@@ -17,6 +22,8 @@ function App() {
     date.setMonth(date.getMonth() - 3);
     return date;
   };
+
+  const [viewMode, setViewMode] = useState<ViewMode>('landing');
 
   const [config, setConfig] = useState<MarketConfig>({
     title: 'Will Donald Trump win the 2024 US Presidential Election?',
@@ -32,6 +39,15 @@ function App() {
     ],
     startDate: getDefaultStartDate(),
     endDate: new Date(),
+    showWatermark: true,
+  });
+
+  const [betSlipConfig, setBetSlipConfig] = useState<BetSlipConfig>({
+    title: 'Will Republicans control the Senate after 2024?',
+    image: null,
+    wager: 1000,
+    odds: 65,
+    answer: 'Yes',
     showWatermark: true,
   });
 
@@ -136,6 +152,10 @@ function App() {
     setConfig((prev) => ({ ...prev, ...updates }));
   }
 
+  function handleBetSlipConfigChange(updates: Partial<BetSlipConfig>) {
+    setBetSlipConfig((prev) => ({ ...prev, ...updates }));
+  }
+
   function handleImageUpload(file: File) {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -146,7 +166,11 @@ function App() {
   }
 
   function handleCropComplete(croppedImage: string) {
-    setConfig((prev) => ({ ...prev, image: croppedImage }));
+    if (viewMode === 'chart') {
+      setConfig((prev) => ({ ...prev, image: croppedImage }));
+    } else if (viewMode === 'betslip') {
+      setBetSlipConfig((prev) => ({ ...prev, image: croppedImage }));
+    }
     setCropperImage(null);
   }
 
@@ -182,7 +206,8 @@ function App() {
   }
 
   async function handleExport() {
-    const element = document.getElementById('chart-preview');
+    const elementId = viewMode === 'chart' ? 'chart-preview' : 'bet-slip-preview';
+    const element = document.getElementById(elementId);
     if (!element) return;
 
     try {
@@ -192,7 +217,8 @@ function App() {
       });
 
       const link = document.createElement('a');
-      link.download = `${config.title.slice(0, 50).replace(/[^a-z0-9]/gi, '-')}.png`;
+      const title = viewMode === 'chart' ? config.title : betSlipConfig.title;
+      link.download = `${title.slice(0, 50).replace(/[^a-z0-9]/gi, '-')}.png`;
       link.href = dataUrl;
       link.click();
     } catch (error) {
@@ -202,7 +228,8 @@ function App() {
   }
 
   async function handleCopyToClipboard() {
-    const element = document.getElementById('chart-preview');
+    const elementId = viewMode === 'chart' ? 'chart-preview' : 'bet-slip-preview';
+    const element = document.getElementById(elementId);
     if (!element) return;
 
     try {
@@ -222,7 +249,8 @@ function App() {
         }),
       ]);
 
-      showToast('Chart copied to clipboard! 📋');
+      const itemType = viewMode === 'chart' ? 'Chart' : 'Bet slip';
+      showToast(`${itemType} copied to clipboard! 📋`);
     } catch (error) {
       console.error('Error copying to clipboard:', error);
       showToast('Failed to copy to clipboard');
@@ -231,23 +259,55 @@ function App() {
 
   return (
     <div className="app">
-      <div className="app-container">
-        <ControlPanel
-          config={config}
-          onConfigChange={handleConfigChange}
-          onImageUpload={handleImageUpload}
-          onExport={handleExport}
-          onRegenerateData={regenerateData}
-          onOpenTrendDrawer={handleOpenTrendDrawer}
-          onCopyToClipboard={handleCopyToClipboard}
+      {viewMode === 'landing' && (
+        <LandingPage
+          onSelectChart={() => setViewMode('chart')}
+          onSelectBetSlip={() => setViewMode('betslip')}
+          chartConfig={config}
+          chartData={data}
+          betSlipConfig={betSlipConfig}
         />
-        <div className="preview-section">
-          <ChartPreview config={config} data={data} />
-          <div className="attribution">
-            <p>Built by <a href="https://x.com/hanznathanpo" target="_blank" rel="noopener noreferrer">Hanz Po</a> • © 2025</p>
+      )}
+
+      {viewMode === 'chart' && (
+        <div className="app-container">
+          <ControlPanel
+            config={config}
+            onConfigChange={handleConfigChange}
+            onImageUpload={handleImageUpload}
+            onExport={handleExport}
+            onRegenerateData={regenerateData}
+            onOpenTrendDrawer={handleOpenTrendDrawer}
+            onCopyToClipboard={handleCopyToClipboard}
+            onBack={() => setViewMode('landing')}
+          />
+          <div className="preview-section">
+            <ChartPreview config={config} data={data} />
+            <div className="attribution">
+              <p>Built by <a href="https://x.com/hanznathanpo" target="_blank" rel="noopener noreferrer">Hanz Po</a> • © 2025</p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {viewMode === 'betslip' && (
+        <div className="app-container">
+          <BetSlipMaker
+            config={betSlipConfig}
+            onConfigChange={handleBetSlipConfigChange}
+            onImageUpload={handleImageUpload}
+            onExport={handleExport}
+            onCopyToClipboard={handleCopyToClipboard}
+            onBack={() => setViewMode('landing')}
+          />
+          <div className="preview-section">
+            <BetSlipPreview config={betSlipConfig} />
+            <div className="attribution">
+              <p>Built by <a href="https://x.com/hanznathanpo" target="_blank" rel="noopener noreferrer">Hanz Po</a> • © 2025</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {cropperImage && (
         <ImageCropper

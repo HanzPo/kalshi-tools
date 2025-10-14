@@ -1,0 +1,228 @@
+.bet-slip-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(20px, 4vw, 40px);
+  min-height: 100%;
+  width: 100%;
+}
+
+.bet-slip-preview {
+  position: relative;
+  width: clamp(320px, 90vw, 500px);
+  max-width: 500px;
+  background: linear-gradient(180deg, #00D395 0%, #00C688 100%);
+  border-radius: clamp(16px, 3vw, 20px);
+  padding: 0 0 clamp(24px, 4vw, 36px) 0; 
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  overflow: visible;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --d: clamp(8px, 1.5vw, 10px);
+}
+
+.bet-slip-header {
+  padding: clamp(16px, 3vw, 24px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bet-slip-logo {
+  width: clamp(60px, 10vw, 80px);
+  height: auto;
+  color: #000000;
+}
+
+.bet-slip-content {
+  background: white;
+  border-radius: clamp(8px, 2vw, 12px);
+  margin: 0 clamp(12px, 3vw, 20px);
+  padding: clamp(20px, 4vw, 28px);
+  position: relative;
+  /* Create scalloped transparent bottom edge by masking circles */
+  /* Base full mask then subtract circular notches along the bottom */
+  -webkit-mask:
+    linear-gradient(#000 0 0),
+    radial-gradient(circle var(--d) at var(--d) 100%,
+      #000 calc(var(--d) - 1px), transparent var(--d))
+      left bottom / calc(var(--d) * 2) calc(var(--d) * 2) repeat-x;
+  mask:
+    linear-gradient(#000 0 0),
+    radial-gradient(circle var(--d) at var(--d) 100%,
+      #000 calc(var(--d) - 1px), transparent var(--d))
+      left bottom / calc(var(--d) * 2) calc(var(--d) * 2) repeat-x;
+  /* Subtract circles from the solid mask */
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+}
+
+.bet-slip-question {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(12px, 2vw, 16px);
+}
+
+.bet-slip-question h2 {
+  font-size: clamp(20px, 5vw, 32px);
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 clamp(12px, 2vw, 16px) 0;
+  line-height: 1.2;
+  flex: 1;
+}
+
+.bet-slip-image-container {
+  flex-shrink: 0;
+}
+
+.bet-slip-image {
+  width: clamp(60px, 12vw, 80px);
+  height: clamp(60px, 12vw, 80px);
+  border-radius: clamp(8px, 2vw, 12px);
+  object-fit: cover;
+  border: none;
+}
+
+.bet-slip-answer {
+  font-size: clamp(18px, 4vw, 24px);
+  font-weight: 400;
+  color: #00C688;
+  margin: clamp(6px, 1vw, 8px) 0 clamp(20px, 4vw, 32px) 0;
+  line-height: 1.3;
+}
+
+.bet-slip-details {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.5vw, 12px);
+}
+
+.bet-slip-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bet-slip-label {
+  font-size: clamp(16px, 3vw, 20px);
+  color: #666666;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.bet-slip-value {
+  font-size: clamp(18px, 3.5vw, 22px);
+  color: #1a1a1a;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.bet-slip-payout-row {
+  margin-top: clamp(8px, 1.5vw, 12px);
+  padding-top: clamp(12px, 2vw, 16px);
+  border-top: 2px solid #f0f0f0;
+}
+
+.bet-slip-payout {
+  font-size: clamp(24px, 6vw, 36px);
+  color: #00C688;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/* Footer elements removed; scallops are punched out of the white card itself */
+
+.bet-slip-watermark {
+  position: absolute;
+  bottom: clamp(30px, 6vw, 50px);
+  right: clamp(16px, 3vw, 24px);
+  font-size: clamp(8px, 1.5vw, 10px);
+  color: rgba(0, 0, 0, 0.25);
+  font-weight: 500;
+  z-index: 10;
+}
+
+/* Responsive breakpoints for bet slip preview */
+
+/* Tablet and smaller screens */
+@media (max-width: 1024px) {
+  .bet-slip-container {
+    padding: clamp(16px, 3vw, 24px);
+  }
+}
+
+/* Mobile landscape and small tablets */
+@media (max-width: 768px) {
+  .bet-slip-container {
+    padding: clamp(12px, 2vw, 16px);
+  }
+  
+  .bet-slip-question {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(8px, 1.5vw, 12px);
+  }
+  
+  .bet-slip-image-container {
+    align-self: flex-start;
+  }
+  
+  .bet-slip-image {
+    width: clamp(50px, 10vw, 60px);
+    height: clamp(50px, 10vw, 60px);
+  }
+}
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+  .bet-slip-container {
+    padding: 12px;
+  }
+  
+  .bet-slip-preview {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .bet-slip-content {
+    margin: 0 8px;
+    padding: 16px;
+  }
+  
+  .bet-slip-question {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .bet-slip-image {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .bet-slip-details {
+    gap: 8px;
+  }
+  
+  .bet-slip-payout-row {
+    margin-top: 8px;
+    padding-top: 12px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  .bet-slip-container {
+    padding: 8px;
+  }
+  
+  .bet-slip-content {
+    margin: 0 6px;
+    padding: 12px;
+  }
+  
+  .bet-slip-image {
+    width: 40px;
+    height: 40px;
+  }
+}
+
