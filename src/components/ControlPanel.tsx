@@ -254,7 +254,7 @@ export function ControlPanel({
     <div className="control-panel">
       <h1 className="panel-title">Kalshi Tools</h1>
       <p className="panel-subtitle">
-        Professional chart generator for prediction markets
+        Realistic chart generator for Kalshi markets
       </p>
 
       <div className="control-group">
