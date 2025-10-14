@@ -263,9 +263,6 @@ function App() {
         <LandingPage
           onSelectChart={() => setViewMode('chart')}
           onSelectBetSlip={() => setViewMode('betslip')}
-          chartConfig={config}
-          chartData={data}
-          betSlipConfig={betSlipConfig}
         />
       )}
 
