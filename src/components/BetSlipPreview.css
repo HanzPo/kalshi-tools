@@ -58,8 +58,15 @@
 
 .bet-slip-question {
   display: flex;
+  flex-direction: row;
   align-items: flex-start;
+  justify-content: space-between;
   gap: clamp(12px, 2vw, 16px);
+}
+
+.bet-slip-question > div:first-child {
+  flex: 1;
+  min-width: 0; /* Allow text to wrap and shrink */
 }
 
 .bet-slip-question h2 {
@@ -68,11 +75,12 @@
   color: #1a1a1a;
   margin: 0 0 clamp(12px, 2vw, 16px) 0;
   line-height: 1.2;
-  flex: 1;
 }
 
 .bet-slip-image-container {
   flex-shrink: 0;
+  align-self: flex-start;
+  margin-left: auto;
 }
 
 .bet-slip-image {
@@ -158,13 +166,15 @@
   }
   
   .bet-slip-question {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
+    justify-content: space-between;
     gap: clamp(8px, 1.5vw, 12px);
   }
   
   .bet-slip-image-container {
     align-self: flex-start;
+    margin-left: auto;
   }
   
   .bet-slip-image {
@@ -190,8 +200,14 @@
   }
   
   .bet-slip-question {
-    flex-direction: column;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
     gap: 8px;
+  }
+  
+  .bet-slip-image-container {
+    margin-left: auto;
   }
   
   .bet-slip-image {
@@ -218,6 +234,16 @@
   .bet-slip-content {
     margin: 0 6px;
     padding: 12px;
+  }
+  
+  .bet-slip-question {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  
+  .bet-slip-image-container {
+    margin-left: auto;
   }
   
   .bet-slip-image {
