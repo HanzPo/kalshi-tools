@@ -10,7 +10,7 @@ export function LandingPage({ onSelectChart, onSelectBetSlip }: LandingPageProps
     <div className="landing-page">
       <div className="landing-header">
         <h1>Kalshi Tools</h1>
-        <p>Create stunning market charts and bet slips</p>
+        <p>Create realistic market charts and bet slips</p>
       </div>
       
       <div className="landing-options">
