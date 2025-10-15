@@ -17,7 +17,7 @@
 }
 
 .landing-header h1 {
-  font-size: clamp(32px, 8vw, 48px);
+  font-size: clamp(32px, 6vw, 48px);
   font-weight: 800;
   margin: 0 0 12px 0;
   color: #1a1a1a;
@@ -33,16 +33,17 @@
 
 .landing-options {
   display: flex;
-  gap: clamp(20px, 4vw, 30px);
+  gap: clamp(20px, 4vw, 40px);
   margin-bottom: clamp(20px, 4vw, 30px);
   flex-wrap: wrap;
   justify-content: center;
-  max-width: 1200px;
+  max-width: 900px;
   width: 100%;
 }
 
 .landing-option {
-  width: clamp(320px, 90vw, 420px);
+  min-width: 260px;
+  width: clamp(260px, 42vw, 420px);
   max-width: 420px;
   background: white;
   border: none;
@@ -63,7 +64,7 @@
 }
 
 .option-image {
-  height: clamp(200px, 25vw, 280px);
+  height: clamp(160px, 20vw, 200px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -162,7 +163,7 @@
 }
 
 .option-title {
-  font-size: clamp(28px, 5vw, 36px);
+  font-size: clamp(28px, 4vw, 36px);
   font-weight: 700;
   color: #000000;
   line-height: 1.1;
@@ -190,7 +191,6 @@
 }
 
 .landing-option .option-image {
-  height: clamp(160px, 20vw, 200px);
   overflow: hidden;
   border-radius: clamp(8px, 1.5vw, 12px);
   display: flex;
@@ -204,61 +204,101 @@
   height: clamp(36px, 6vw, 48px);
 }
 
-/* Tablet and smaller screens */
+/* Large tablets and smaller desktop screens */
 @media (max-width: 1024px) {
   .landing-page {
-    padding: clamp(16px, 3vw, 20px);
+    padding: clamp(20px, 3vw, 30px);
   }
   
   .landing-header {
-    margin-bottom: clamp(24px, 4vw, 40px);
+    margin-bottom: clamp(30px, 4vw, 40px);
   }
 }
 
-/* Mobile landscape and small tablets */
+/* Tablets and smaller - switch to single column */
 @media (max-width: 900px) {
   .landing-options {
     flex-direction: column;
     align-items: center;
-    gap: clamp(16px, 3vw, 20px);
+    gap: clamp(16px, 3vw, 24px);
   }
 
   .landing-option {
-    width: 100%;
+    width: clamp(260px, 75vw, 420px);
+    min-width: 260px;
     max-width: 420px;
   }
 }
 
-/* Mobile portrait */
-@media (max-width: 768px) {
+/* Mobile devices */
+@media (max-width: 640px) {
   .landing-page {
-    padding: clamp(30px, 4vw, 40px) clamp(12px, 2vw, 16px);
-    min-height: 100vh;
+    padding: clamp(20px, 4vw, 30px) clamp(16px, 4vw, 20px);
   }
   
   .landing-header {
-    margin-bottom: clamp(20px, 3vw, 24px);
+    margin-bottom: clamp(24px, 4vw, 32px);
   }
   
   .landing-options {
-    gap: clamp(12px, 2vw, 16px);
-    margin-bottom: clamp(16px, 3vw, 20px);
+    gap: clamp(16px, 3vw, 20px);
+    margin-bottom: clamp(20px, 4vw, 24px);
   }
   
   .landing-option {
-    width: 100%;
-    max-width: 100%;
+    width: clamp(260px, 82vw, 380px);
+    min-width: 260px;
+    max-width: 380px;
   }
   
   .landing-option:hover {
     transform: translateY(-4px);
+  }
+
+  .option-content {
+    padding: clamp(20px, 4vw, 28px);
   }
 }
 
 /* Small mobile devices */
 @media (max-width: 480px) {
   .landing-page {
-    padding: 30px 12px;
+    padding: 24px 16px;
+  }
+  
+  .landing-header {
+    margin-bottom: 20px;
+  }
+  
+  .landing-options {
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .landing-option {
+    width: clamp(240px, 88vw, 340px);
+    min-width: 240px;
+    max-width: 340px;
+  }
+  
+  .option-content {
+    padding: 20px;
+  }
+  
+  .landing-option .option-image {
+    height: clamp(140px, 25vw, 180px);
+  }
+  
+  .landing-option .option-image svg {
+    width: clamp(28px, 6vw, 36px);
+    height: clamp(28px, 6vw, 36px);
+  }
+}
+
+/* Very small screens (< 320px) */
+@media (max-width: 320px) {
+  .landing-page {
+    padding: 20px 8px;
   }
   
   .landing-header {
@@ -269,33 +309,32 @@
     gap: 12px;
     margin-bottom: 16px;
   }
+
+  .landing-option {
+    width: clamp(220px, 92vw, 280px);
+    min-width: 220px;
+    max-width: 280px;
+  }
   
   .option-content {
-    padding: 20px;
+    padding: 16px 12px;
   }
   
   .landing-option .option-image {
-    height: 140px;
+    height: clamp(120px, 22vw, 140px);
   }
   
   .landing-option .option-image svg {
-    width: 32px;
-    height: 32px;
+    width: clamp(24px, 5vw, 28px);
+    height: clamp(24px, 5vw, 28px);
   }
-}
 
-/* Very small screens */
-@media (max-width: 360px) {
-  .landing-page {
-    padding: 25px 8px;
+  .option-title {
+    font-size: clamp(24px, 6vw, 28px);
   }
-  
-  .option-content {
-    padding: 16px;
-  }
-  
-  .landing-option .option-image {
-    height: 120px;
+
+  .option-subtitle {
+    font-size: clamp(12px, 3vw, 14px);
   }
 }
 
