@@ -1,8 +1,36 @@
+/* Safari-specific mobile fix - force single column on mobile */
+@supports (-webkit-appearance: none) {
+  @media (max-width: 1024px) {
+    .landing-options {
+      -webkit-flex-direction: column !important;
+      flex-direction: column !important;
+      -webkit-align-items: center !important;
+      align-items: center !important;
+    }
+    
+  .landing-option {
+    width: 85vw !important;
+    max-width: 420px !important;
+    min-width: 260px !important;
+    margin-bottom: 20px !important;
+  }
+  
+  /* Safari gap fallback */
+  .landing-option:not(:last-child) {
+    margin-bottom: 20px !important;
+  }
+  }
+}
+
 .landing-page {
   min-height: 100vh;
+  display: -webkit-flex; /* Safari prefix */
   display: flex;
+  -webkit-flex-direction: column; /* Safari prefix */
   flex-direction: column;
+  -webkit-align-items: center; /* Safari prefix */
   align-items: center;
+  -webkit-justify-content: center; /* Safari prefix */
   justify-content: center;
   padding: 40px 20px;
   background: #f8f9fa;
@@ -17,6 +45,7 @@
 }
 
 .landing-header h1 {
+  font-size: 32px; /* Safari fallback */
   font-size: clamp(32px, 6vw, 48px);
   font-weight: 800;
   margin: 0 0 12px 0;
@@ -25,6 +54,7 @@
 }
 
 .landing-header p {
+  font-size: 16px; /* Safari fallback */
   font-size: clamp(16px, 3vw, 18px);
   margin: 0;
   color: #666666;
@@ -32,10 +62,15 @@
 }
 
 .landing-options {
+  display: -webkit-flex; /* Safari prefix */
   display: flex;
+  gap: 20px; /* Safari fallback */
   gap: clamp(20px, 4vw, 40px);
+  margin-bottom: 20px; /* Safari fallback */
   margin-bottom: clamp(20px, 4vw, 30px);
+  -webkit-flex-wrap: wrap; /* Safari prefix */
   flex-wrap: wrap;
+  -webkit-justify-content: center; /* Safari prefix */
   justify-content: center;
   max-width: 900px;
   width: 100%;
@@ -43,18 +78,25 @@
 
 .landing-option {
   min-width: 260px;
+  width: 300px; /* Safari fallback */
   width: clamp(260px, 42vw, 420px);
   max-width: 420px;
   background: white;
   border: none;
+  border-radius: 16px; /* Safari fallback */
   border-radius: clamp(16px, 3vw, 24px);
   padding: 0;
   cursor: pointer;
+  -webkit-transition: all 0.3s ease; /* Safari prefix */
   transition: all 0.3s ease;
+  -webkit-box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); /* Safari prefix */
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   overflow: hidden;
+  display: -webkit-flex; /* Safari prefix */
   display: flex;
+  -webkit-flex-direction: column; /* Safari prefix */
   flex-direction: column;
+  -webkit-flex: 1; /* Safari prefix */
   flex: 1;
 }
 
@@ -64,10 +106,15 @@
 }
 
 .option-image {
+  height: 160px; /* Safari fallback */
   height: clamp(160px, 20vw, 200px);
+  display: -webkit-flex; /* Safari prefix */
   display: flex;
+  -webkit-align-items: center; /* Safari prefix */
   align-items: center;
+  -webkit-justify-content: center; /* Safari prefix */
   justify-content: center;
+  background: -webkit-linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%); /* Safari prefix */
   background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
   position: relative;
   overflow: hidden;
@@ -148,21 +195,27 @@
 }
 
 .option-content {
+  padding: 24px; /* Safari fallback */
   padding: clamp(24px, 4vw, 32px);
+  display: -webkit-flex; /* Safari prefix */
   display: flex;
+  -webkit-flex-direction: column; /* Safari prefix */
   flex-direction: column;
+  gap: 6px; /* Safari fallback */
   gap: clamp(6px, 1vw, 8px);
   text-align: center;
   background: white;
 }
 
 .option-subtitle {
+  font-size: 14px; /* Safari fallback */
   font-size: clamp(14px, 2.5vw, 16px);
   color: #6b7280;
   font-weight: 500;
 }
 
 .option-title {
+  font-size: 28px; /* Safari fallback */
   font-size: clamp(28px, 4vw, 36px);
   font-weight: 700;
   color: #000000;
@@ -218,44 +271,73 @@
 /* Tablets and smaller - switch to single column */
 @media (max-width: 900px) {
   .landing-options {
+    -webkit-flex-direction: column; /* Safari prefix */
     flex-direction: column;
+    -webkit-align-items: center; /* Safari prefix */
     align-items: center;
+    gap: 16px; /* Safari fallback */
     gap: clamp(16px, 3vw, 24px);
   }
 
   .landing-option {
+    width: 350px; /* Safari fallback */
     width: clamp(260px, 75vw, 420px);
     min-width: 260px;
     max-width: 420px;
   }
 }
 
+/* Safari-specific single column fix */
+@supports (-webkit-appearance: none) {
+  @media (max-width: 900px) {
+    .landing-options {
+      -webkit-flex-direction: column !important;
+      flex-direction: column !important;
+    }
+    
+    .landing-option {
+      width: 80vw !important;
+      max-width: 420px !important;
+      min-width: 260px !important;
+    }
+  }
+}
+
 /* Mobile devices */
 @media (max-width: 640px) {
   .landing-page {
+    padding: 20px 16px; /* Safari fallback */
     padding: clamp(20px, 4vw, 30px) clamp(16px, 4vw, 20px);
   }
   
   .landing-header {
+    margin-bottom: 24px; /* Safari fallback */
     margin-bottom: clamp(24px, 4vw, 32px);
   }
   
   .landing-options {
+    -webkit-flex-direction: column; /* Safari prefix */
+    flex-direction: column;
+    gap: 16px; /* Safari fallback */
     gap: clamp(16px, 3vw, 20px);
+    margin-bottom: 20px; /* Safari fallback */
     margin-bottom: clamp(20px, 4vw, 24px);
   }
   
   .landing-option {
+    width: 90vw; /* Safari fallback */
     width: clamp(260px, 82vw, 380px);
     min-width: 260px;
     max-width: 380px;
   }
   
   .landing-option:hover {
+    -webkit-transform: translateY(-4px); /* Safari prefix */
     transform: translateY(-4px);
   }
 
   .option-content {
+    padding: 20px; /* Safari fallback */
     padding: clamp(20px, 4vw, 28px);
   }
 }
