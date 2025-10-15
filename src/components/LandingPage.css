@@ -1,24 +1,22 @@
-/* Safari-specific mobile fix - force single column on mobile */
-@supports (-webkit-appearance: none) {
-  @media (max-width: 1024px) {
-    .landing-options {
-      -webkit-flex-direction: column !important;
-      flex-direction: column !important;
-      -webkit-align-items: center !important;
-      align-items: center !important;
-    }
-    
-  .landing-option {
-    width: 85vw !important;
-    max-width: 420px !important;
-    min-width: 260px !important;
-    margin-bottom: 20px !important;
+/* Force single column on mobile/tablet for all browsers including Safari */
+@media (max-width: 1024px) {
+  .landing-options {
+    -webkit-flex-direction: column !important;
+    flex-direction: column !important;
+    -webkit-align-items: center !important;
+    align-items: center !important;
+    gap: 0 !important; /* Remove gap, use margins instead */
   }
   
-  /* Safari gap fallback */
-  .landing-option:not(:last-child) {
-    margin-bottom: 20px !important;
+  .landing-option {
+    width: 80vw !important;
+    max-width: 420px !important;
+    min-width: 280px !important;
+    margin-bottom: 24px !important;
   }
+  
+  .landing-option:last-child {
+    margin-bottom: 0 !important;
   }
 }
 
@@ -77,13 +75,12 @@
 }
 
 .landing-option {
-  min-width: 260px;
-  width: 300px; /* Safari fallback */
-  width: clamp(260px, 42vw, 420px);
+  min-width: 280px;
+  width: 400px; /* Safari fallback - fixed width */
   max-width: 420px;
   background: white;
   border: none;
-  border-radius: 16px; /* Safari fallback */
+  border-radius: 20px; /* Safari fallback */
   border-radius: clamp(16px, 3vw, 24px);
   padding: 0;
   cursor: pointer;
@@ -96,8 +93,8 @@
   display: flex;
   -webkit-flex-direction: column; /* Safari prefix */
   flex-direction: column;
-  -webkit-flex: 1; /* Safari prefix */
-  flex: 1;
+  -webkit-flex: none; /* Safari - don't use flex: 1 */
+  flex: none;
 }
 
 .landing-option:hover {
@@ -287,19 +284,21 @@
   }
 }
 
-/* Safari-specific single column fix */
-@supports (-webkit-appearance: none) {
-  @media (max-width: 900px) {
-    .landing-options {
-      -webkit-flex-direction: column !important;
-      flex-direction: column !important;
-    }
-    
-    .landing-option {
-      width: 80vw !important;
-      max-width: 420px !important;
-      min-width: 260px !important;
-    }
+/* Additional Safari mobile fix */
+@media screen and (max-width: 768px) and (-webkit-min-device-pixel-ratio: 1) {
+  .landing-options {
+    display: -webkit-flex !important;
+    display: flex !important;
+    -webkit-flex-direction: column !important;
+    flex-direction: column !important;
+    -webkit-align-items: center !important;
+    align-items: center !important;
+  }
+  
+  .landing-option {
+    width: 85vw !important;
+    max-width: 380px !important;
+    min-width: 260px !important;
   }
 }
 
