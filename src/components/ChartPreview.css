@@ -72,12 +72,14 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: nowrap;
 }
 
 .odds-group {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .odds-value {
@@ -93,14 +95,17 @@
   color: #6b7280;
   font-weight: 400;
   margin-top: 2px;
+  white-space: nowrap;
 }
 
 .odds-change {
   font-size: 16px;
   font-weight: 600;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 2px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .platform-logo {
@@ -125,6 +130,8 @@
   font-size: 14px;
   font-weight: 500;
   color: #6b7280;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .timeframes {
@@ -163,6 +170,10 @@
     height: 48px;
   }
 
+  .odds-main {
+    gap: 10px;
+  }
+
   .odds-value {
     font-size: 40px;
   }
@@ -181,6 +192,10 @@
 
   .chart-container {
     height: 260px;
+  }
+
+  .volume {
+    font-size: 13px;
   }
 
   .timeframes {
