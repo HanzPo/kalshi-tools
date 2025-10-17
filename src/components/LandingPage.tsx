@@ -44,7 +44,7 @@ export function LandingPage({ onSelectChart, onSelectBetSlip }: LandingPageProps
       </div>
 
       <div className="landing-footer">
-        <p>Built by <a href="https://x.com/hanznathanpo" target="_blank" rel="noopener noreferrer">Hanz Po</a> • © 2025</p>
+        <p>Built by <a href="https://x.com/hanznathanpo" target="_blank" rel="noopener noreferrer">Hanz Po</a> • <a href="https://kalshi.com/?utm_source=kalshitools" target="_blank" rel="noopener noreferrer">Visit Kalshi</a> • © 2025</p>
       </div>
     </div>
   );
