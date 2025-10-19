@@ -10,6 +10,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.2.8",
     "html-to-image": "^1.11.11",
     "protobufjs": "^7.5.4",
     "react": "^18.2.0",
