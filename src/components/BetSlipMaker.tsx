@@ -64,7 +64,8 @@ export function BetSlipMaker({
   return (
     <div className="control-panel">
       <button onClick={onBack} className="back-button-control-panel">
-        ← Back
+        <span aria-hidden="true">&larr;</span>
+        Back
       </button>
       <h1 className="panel-title">Bet Slip Maker</h1>
       <p className="panel-subtitle">
@@ -215,4 +216,5 @@ export function BetSlipMaker({
     </div>
   );
 }
+
 

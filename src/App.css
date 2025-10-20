@@ -1,48 +1,98 @@
 .app {
   min-height: 100vh;
-  padding: 24px;
-  background: #fafafa;
+  padding: 64px 32px 96px;
+  background: linear-gradient(180deg, #f8fafc 0%, #ecfdf5 65%, #f8fafc 100%);
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  color: #0f172a;
+}
+
+.app.landing-active {
+  min-height: 100vh;
+  height: 100vh;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+.app.landing-active > .landing-page {
+  min-height: 100%;
+  height: 100%;
 }
 
 .app-container {
-  max-width: 1400px;
+  width: min(1260px, 100%);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 420px 1fr;
-  gap: 32px;
+  grid-template-columns: minmax(320px, 420px) 1fr;
+  gap: 36px;
   align-items: start;
 }
 
 .preview-section {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 20px 0;
+  align-items: stretch;
+  gap: 24px;
+  padding: 0;
   position: sticky;
-  top: 24px;
+  top: 32px;
   align-self: start;
+  width: 100%;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.preview-section > * {
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .app {
+    padding: 48px 24px 80px;
+  }
+
+  .app-container {
+    grid-template-columns: minmax(300px, 380px) 1fr;
+    gap: 28px;
+  }
+
+  .preview-section {
+    padding: 30px 26px;
+    top: 24px;
+    border-radius: 26px;
+  }
 }
 
 @media (max-width: 1024px) {
   .app-container {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 28px;
   }
   
   .preview-section {
     position: static;
+    width: 100%;
   }
 }
 
 @media (max-width: 768px) {
   .app {
-    padding: 16px;
+    padding: 24px 16px 48px;
   }
 
   .app-container {
     gap: 20px;
   }
+
+  .preview-section {
+    padding: 24px 20px;
+    gap: 20px;
+    border-radius: 22px;
+  }
 }
+
 
 .toast {
   position: fixed;

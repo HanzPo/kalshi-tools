@@ -26,7 +26,7 @@ function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('landing');
 
   const [config, setConfig] = useState<MarketConfig>({
-    title: 'Will Donald Trump win the 2024 US Presidential Election?',
+    title: '',
     image: null,
     marketType: 'binary',
     currentOdds: 92,
@@ -257,8 +257,10 @@ function App() {
     }
   }
 
+  const appClassName = `app${viewMode === 'landing' ? ' landing-active' : ''}`;
+
   return (
-    <div className="app">
+    <div className={appClassName}>
       {viewMode === 'landing' && (
         <LandingPage
           onSelectChart={() => setViewMode('chart')}

@@ -256,7 +256,8 @@ export function ControlPanel({
     <div className="control-panel">
       {onBack && (
         <button onClick={onBack} className="back-button-control-panel">
-          ← Back
+          <span aria-hidden="true">&larr;</span>
+          Back
         </button>
       )}
       <h1 className="panel-title">Chart Maker</h1>
@@ -702,4 +703,5 @@ export function ControlPanel({
     </div>
   );
 }
+
 
