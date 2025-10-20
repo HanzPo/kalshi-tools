@@ -192,23 +192,23 @@
 }
 
 .button-export {
-  background: linear-gradient(135deg, #17d6a0 0%, #0ca977 50%, #0a8a63 100%);
+  background: linear-gradient(135deg, #22c693 0%, #0e9164 55%, #0a6f4d 100%);
   color: white;
 }
 
 .button-export:hover {
   transform: translateY(-1px);
-  box-shadow: 0 14px 26px rgba(10, 138, 99, 0.22);
+  box-shadow: 0 12px 22px rgba(10, 111, 77, 0.18);
 }
 
 .button-draw {
-  background: linear-gradient(135deg, #7cb5f9 0%, #3b82f6 50%, #2563eb 100%);
+  background: linear-gradient(135deg, #8abef9 0%, #4c8ff6 55%, #2a63da 100%);
   color: white;
 }
 
 .button-draw:hover {
   transform: translateY(-1px);
-  box-shadow: 0 14px 26px rgba(59, 130, 246, 0.22);
+  box-shadow: 0 12px 22px rgba(59, 130, 246, 0.2);
 }
 
 .panel-footer {
