@@ -1,5 +1,11 @@
 import { useState, useRef, useCallback } from 'react';
-import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
+import ReactCrop, {
+  Crop,
+  PixelCrop,
+  centerCrop,
+  convertToPixelCrop,
+  makeAspectCrop,
+} from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import './ImageCropper.css';
 
@@ -10,21 +16,43 @@ interface ImageCropperProps {
 }
 
 export function ImageCropper({ imageSrc, onCropComplete, onCancel }: ImageCropperProps) {
-  const [crop, setCrop] = useState<Crop>({
-    unit: '%',
-    width: 100,
-    height: 100,
-    x: 0,
-    y: 0,
-  });
+  const [crop, setCrop] = useState<Crop | undefined>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
   const imgRef = useRef<HTMLImageElement>(null);
 
+  const handleImageLoad = useCallback((event: React.SyntheticEvent<HTMLImageElement>) => {
+    const { naturalWidth, naturalHeight } = event.currentTarget;
+    const initialCrop = centerCrop(
+      makeAspectCrop(
+        {
+          unit: '%',
+          width: 100,
+        },
+        1,
+        naturalWidth,
+        naturalHeight
+      ),
+      naturalWidth,
+      naturalHeight
+    );
+
+    setCrop(initialCrop);
+    setCompletedCrop(convertToPixelCrop(initialCrop, naturalWidth, naturalHeight));
+  }, []);
+
   const getCroppedImg = useCallback((): string | null => {
     const image = imgRef.current;
-    const pixelCrop = completedCrop;
+    if (!image) {
+      return null;
+    }
 
-    if (!image || !pixelCrop) {
+    const pixelCrop =
+      completedCrop ??
+      (crop
+        ? convertToPixelCrop(crop, image.naturalWidth, image.naturalHeight)
+        : null);
+
+    if (!pixelCrop || !pixelCrop.width || !pixelCrop.height) {
       return null;
     }
 
@@ -37,6 +65,9 @@ export function ImageCropper({ imageSrc, onCropComplete, onCancel }: ImageCroppe
     
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.drawImage(
       image,
@@ -51,7 +82,7 @@ export function ImageCropper({ imageSrc, onCropComplete, onCancel }: ImageCroppe
     );
 
     return canvas.toDataURL('image/jpeg');
-  }, [completedCrop]);
+  }, [completedCrop, crop]);
 
   const handleComplete = useCallback(() => {
     const croppedImage = getCroppedImg();
@@ -67,8 +98,8 @@ export function ImageCropper({ imageSrc, onCropComplete, onCancel }: ImageCroppe
         <div className="cropper-container">
           <ReactCrop
             crop={crop}
-            onChange={(c) => setCrop(c)}
-            onComplete={(c) => setCompletedCrop(c)}
+            onChange={(_, percentCrop) => setCrop(percentCrop)}
+            onComplete={(pixelCrop) => setCompletedCrop(pixelCrop)}
             aspect={1}
             circularCrop={false}
             ruleOfThirds
@@ -77,6 +108,7 @@ export function ImageCropper({ imageSrc, onCropComplete, onCancel }: ImageCroppe
               ref={imgRef}
               src={imageSrc}
               alt="Crop preview"
+              onLoad={handleImageLoad}
               style={{ maxWidth: '100%', maxHeight: '60vh', display: 'block' }}
             />
           </ReactCrop>

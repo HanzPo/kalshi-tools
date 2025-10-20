@@ -1,5 +1,5 @@
 import { ChangeEvent, useState, DragEvent } from 'react';
-import { BetSlipConfig } from '../types';
+import { BetSlipConfig, BetSlipMode, ParlayLeg } from '../types';
 import '../components/ControlPanel.css';
 
 interface BetSlipMakerProps {
@@ -11,6 +11,31 @@ interface BetSlipMakerProps {
   onBack: () => void;
 }
 
+function createLeg(): ParlayLeg {
+  return {
+    id: `leg-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    question: '',
+    answer: 'Yes',
+    image: null,
+  };
+}
+
+function calculateSinglePayout(wager: number, odds: number): number {
+  if (odds <= 0 || odds >= 100) return 0;
+  return Math.round((wager / (odds / 100)) * 100) / 100;
+}
+
+function calculateAmericanPayout(wager: number, odds: number): number {
+  if (!Number.isFinite(odds) || odds === 0) {
+    return 0;
+  }
+
+  const fractionalReturn =
+    odds > 0 ? odds / 100 : 100 / Math.abs(odds);
+
+  return Math.round((wager * (1 + fractionalReturn)) * 100) / 100;
+}
+
 export function BetSlipMaker({
   config,
   onConfigChange,
@@ -20,6 +45,20 @@ export function BetSlipMaker({
   onBack,
 }: BetSlipMakerProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const isSingleMode = config.mode === 'single';
+  const payout = isSingleMode
+    ? calculateSinglePayout(config.wager, config.odds)
+    : calculateAmericanPayout(config.wager, config.parlayOdds);
+
+  function handleModeChange(mode: BetSlipMode) {
+    if (mode === config.mode) return;
+
+    if (mode === 'parlay' && config.parlayLegs.length === 0) {
+      onConfigChange({ mode, parlayLegs: [createLeg(), createLeg()] });
+    } else {
+      onConfigChange({ mode });
+    }
+  }
 
   function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -29,18 +68,21 @@ export function BetSlipMaker({
   }
 
   function handleDragOver(e: DragEvent<HTMLDivElement>) {
+    if (!isSingleMode) return;
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
   }
 
   function handleDragLeave(e: DragEvent<HTMLDivElement>) {
+    if (!isSingleMode) return;
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
   }
 
   function handleDrop(e: DragEvent<HTMLDivElement>) {
+    if (!isSingleMode) return;
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
@@ -54,12 +96,40 @@ export function BetSlipMaker({
     }
   }
 
-  const calculatePayout = (wager: number, odds: number): number => {
-    if (odds <= 0 || odds >= 100) return 0;
-    return Math.round((wager / (odds / 100)) * 100) / 100;
-  };
+  function handleLegChange(legId: string, updates: Partial<ParlayLeg>) {
+    const updatedLegs = config.parlayLegs.map((leg) =>
+      leg.id === legId ? { ...leg, ...updates } : leg
+    );
+    onConfigChange({ parlayLegs: updatedLegs });
+  }
 
-  const payout = calculatePayout(config.wager, config.odds);
+  function handleLegImageInput(
+    legId: string,
+    event: ChangeEvent<HTMLInputElement>
+  ) {
+    const file = event.target.files?.[0];
+    if (!file || !file.type.startsWith('image/')) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result;
+      if (typeof result === 'string') {
+        handleLegChange(legId, { image: result });
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleAddLeg() {
+    onConfigChange({ parlayLegs: [...config.parlayLegs, createLeg()] });
+  }
+
+  function handleRemoveLeg(legId: string) {
+    if (config.parlayLegs.length <= 1) return;
+    onConfigChange({
+      parlayLegs: config.parlayLegs.filter((leg) => leg.id !== legId),
+    });
+  }
 
   return (
     <div className="control-panel">
@@ -73,80 +143,222 @@ export function BetSlipMaker({
       </p>
 
       <div className="control-group">
-        <label htmlFor="bet-title">Question</label>
+        <label>Bet Slip Type</label>
+        <div className="segmented-control">
+          <button
+            type="button"
+            className={`segmented-option${isSingleMode ? ' active' : ''}`}
+            onClick={() => handleModeChange('single')}
+            aria-pressed={isSingleMode}
+          >
+            Single
+          </button>
+          <button
+            type="button"
+            className={`segmented-option${config.mode === 'parlay' ? ' active' : ''}`}
+            onClick={() => handleModeChange('parlay')}
+            aria-pressed={config.mode === 'parlay'}
+          >
+            Parlay
+          </button>
+        </div>
+      </div>
+
+      <div className="control-group">
+        <label htmlFor="bet-title">
+          {isSingleMode ? 'Question' : 'Slip Title'}
+        </label>
         <input
           id="bet-title"
           type="text"
           className="text-input"
-          placeholder="e.g., Will Democrats win the 2024 Presidential Election?"
+          placeholder={
+            isSingleMode
+              ? 'e.g., Will Democrats win the 2024 Presidential Election?'
+              : 'e.g., Sunday Night Parlay'
+          }
           value={config.title}
           onChange={(e) => onConfigChange({ title: e.target.value })}
         />
       </div>
 
-      <div className="control-group">
-        <label htmlFor="bet-answer">Answer</label>
-        <input
-          id="bet-answer"
-          type="text"
-          className="text-input"
-          placeholder="e.g., yes"
-          value={config.answer}
-          onChange={(e) => onConfigChange({ answer: e.target.value })}
-        />
-      </div>
+      {isSingleMode ? (
+        <>
+          <div className="control-group">
+            <label htmlFor="bet-answer">Answer</label>
+            <input
+              id="bet-answer"
+              type="text"
+              className="text-input"
+              placeholder="e.g., yes"
+              value={config.answer}
+              onChange={(e) => onConfigChange({ answer: e.target.value })}
+            />
+          </div>
 
-      <div className="control-group">
-        <label htmlFor="bet-image">Image (Optional)</label>
-        <div
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          style={{
-            border: `2px dashed ${isDragging ? '#09C285' : '#d1d5db'}`,
-            borderRadius: '8px',
-            padding: '12px',
-            textAlign: 'center',
-            backgroundColor: isDragging ? '#ecfdf5' : '#f9fafb',
-            transition: 'all 0.2s',
-            cursor: 'pointer',
-            marginBottom: '8px'
-          }}
-        >
-          <input
-            id="bet-image"
-            type="file"
-            accept="image/jpeg,image/png,image/jpg"
-            onChange={handleImageChange}
-            className="file-input"
-            style={{ display: 'none' }}
-          />
-          <label
-            htmlFor="bet-image"
-            style={{
-              cursor: 'pointer',
-              display: 'block',
-              color: isDragging ? '#09C285' : '#6b7280',
-              fontWeight: '500',
-              fontSize: '14px',
-              lineHeight: '1.5'
-            }}
-          >
-            {isDragging ? (
-              <>
-                <span style={{ verticalAlign: 'middle', marginRight: '6px' }}>📥</span>
-                <span style={{ display: 'inline-block', verticalAlign: 'middle', transform: 'translateY(4px)' }}>Drop image here</span>
-              </>
-            ) : (
-              <>
-                <span style={{ verticalAlign: 'middle', marginRight: '6px' }}>📷</span>
-                <span style={{ display: 'inline-block', verticalAlign: 'middle', transform: 'translateY(2px)' }}>Click to upload or drag & drop</span>
-              </>
-            )}
-          </label>
+          <div className="control-group">
+            <label>Answer Color</label>
+            <div className="color-toggle">
+              <button
+                type="button"
+                className={`color-option color-option-green${config.answerColor === 'green' ? ' active' : ''}`}
+                onClick={() => onConfigChange({ answerColor: 'green' })}
+                aria-pressed={config.answerColor === 'green'}
+              >
+                <span className="color-swatch color-green" aria-hidden="true"></span>
+                Green
+              </button>
+              <button
+                type="button"
+                className={`color-option color-option-red${config.answerColor === 'red' ? ' active' : ''}`}
+                onClick={() => onConfigChange({ answerColor: 'red' })}
+                aria-pressed={config.answerColor === 'red'}
+              >
+                <span className="color-swatch color-red" aria-hidden="true"></span>
+                Red
+              </button>
+            </div>
+          </div>
+
+          <div className="control-group">
+            <label htmlFor="bet-image">Image (Optional)</label>
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              style={{
+                border: `2px dashed ${isDragging ? '#09C285' : '#d1d5db'}`,
+                borderRadius: '8px',
+                padding: '12px',
+                textAlign: 'center',
+                backgroundColor: isDragging ? '#ecfdf5' : '#f9fafb',
+                transition: 'all 0.2s',
+                cursor: 'pointer',
+                marginBottom: '8px'
+              }}
+            >
+              <input
+                id="bet-image"
+                type="file"
+                accept="image/jpeg,image/png,image/jpg"
+                onChange={handleImageChange}
+                className="file-input"
+                style={{ display: 'none' }}
+              />
+              <label
+                htmlFor="bet-image"
+                style={{
+                  cursor: 'pointer',
+                  display: 'block',
+                  color: isDragging ? '#09C285' : '#6b7280',
+                  fontWeight: '500',
+                  fontSize: '14px',
+                  lineHeight: '1.5'
+                }}
+              >
+                {isDragging ? (
+                  <>
+                    <span style={{ verticalAlign: 'middle', marginRight: '6px' }}>📥</span>
+                    <span style={{ display: 'inline-block', verticalAlign: 'middle', transform: 'translateY(4px)' }}>Drop image here</span>
+                  </>
+                ) : (
+                  <>
+                    <span style={{ verticalAlign: 'middle', marginRight: '6px' }}>📷</span>
+                    <span style={{ display: 'inline-block', verticalAlign: 'middle', transform: 'translateY(2px)' }}>Click to upload or drag & drop</span>
+                  </>
+                )}
+              </label>
+            </div>
+            <p className="help-text">Supports JPG, PNG formats</p>
+          </div>
+        </>
+      ) : (
+        <div className="control-group">
+          <label aria-hidden="true">Parlay Legs</label>
+          <div className="parlay-legs">
+            {config.parlayLegs.map((leg, index) => (
+              <div key={leg.id} className="parlay-leg">
+                <div className="parlay-leg-header">
+                  <span className="parlay-leg-title">Leg {index + 1}</span>
+                  <button
+                    type="button"
+                    className="parlay-leg-remove"
+                    onClick={() => handleRemoveLeg(leg.id)}
+                    disabled={config.parlayLegs.length <= 1}
+                  >
+                    Remove
+                  </button>
+                </div>
+                <div className="parlay-leg-body">
+                  <label className="parlay-leg-label" htmlFor={`parlay-question-${leg.id}`}>
+                    Question
+                  </label>
+                  <input
+                    id={`parlay-question-${leg.id}`}
+                    type="text"
+                    className="text-input"
+                    placeholder="e.g., New York Giants to win?"
+                    value={leg.question}
+                    onChange={(e) => handleLegChange(leg.id, { question: e.target.value })}
+                  />
+                  <div className="parlay-leg-controls">
+                    <div className="parlay-leg-control">
+                      <span className="parlay-leg-label">Answer</span>
+                      <div className="segmented-control parlay-answer-toggle">
+                        {(['Yes', 'No'] as ParlayLeg['answer'][]).map((answer) => (
+                          <button
+                            key={answer}
+                            type="button"
+                            className={`segmented-option${leg.answer === answer ? ' active' : ''}`}
+                            onClick={() => handleLegChange(leg.id, { answer })}
+                            aria-pressed={leg.answer === answer}
+                          >
+                            {answer}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="parlay-leg-control">
+                      <span className="parlay-leg-label">Image</span>
+                      <div className="parlay-image-upload">
+                        {leg.image ? (
+                          <>
+                            <img src={leg.image} alt="" className="parlay-leg-image" />
+                            <button
+                              type="button"
+                              className="parlay-image-clear"
+                              onClick={() => handleLegChange(leg.id, { image: null })}
+                            >
+                              Remove
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <label htmlFor={`parlay-image-${leg.id}`} className="parlay-image-placeholder">
+                              Upload
+                            </label>
+                            <input
+                              id={`parlay-image-${leg.id}`}
+                              type="file"
+                              accept="image/jpeg,image/png,image/jpg"
+                              onChange={(e) => handleLegImageInput(leg.id, e)}
+                              className="file-input"
+                              style={{ display: 'none' }}
+                            />
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+            <button type="button" className="parlay-leg-add" onClick={handleAddLeg}>
+              + Add Leg
+            </button>
+          </div>
         </div>
-        <p className="help-text">Supports JPG, PNG formats</p>
-      </div>
+      )}
 
       <div className="control-group">
         <label htmlFor="bet-wager">Wager Amount ($)</label>
@@ -162,24 +374,49 @@ export function BetSlipMaker({
         />
       </div>
 
-      <div className="control-group">
-        <label htmlFor="bet-odds">Odds (%)</label>
-        <input
-          id="bet-odds"
-          type="number"
-          className="text-input"
-          placeholder="e.g., 50"
-          value={config.odds}
-          onChange={(e) => onConfigChange({ odds: parseFloat(e.target.value) || 0 })}
-          min="1"
-          max="99"
-          step="1"
-        />
-        <p className="help-text">Expected payout: ${payout.toLocaleString()}</p>
-      </div>
+      {isSingleMode ? (
+        <div className="control-group">
+          <label htmlFor="bet-odds">Odds (%)</label>
+          <div className="slider-wrapper">
+            <input
+              id="bet-odds"
+              type="range"
+              className="slider-input"
+              value={config.odds}
+              onChange={(e) => onConfigChange({ odds: Number(e.target.value) })}
+              min="1"
+              max="99"
+              step="1"
+            />
+            <div className="slider-value">{config.odds}% chance</div>
+          </div>
+          <p className="help-text">Expected payout: ${payout.toLocaleString()}</p>
+        </div>
+      ) : (
+        <div className="control-group">
+          <label htmlFor="parlay-odds">American Odds</label>
+          <input
+            id="parlay-odds"
+            type="number"
+            className="text-input"
+            value={config.parlayOdds}
+            onChange={(e) =>
+              onConfigChange({ parlayOdds: Number(e.target.value) || 0 })
+            }
+            placeholder="+500"
+            step="10"
+          />
+          <p className="help-text">
+            Enter positive or negative odds (e.g., -110 or +250). Potential payout: ${payout.toLocaleString()}
+          </p>
+        </div>
+      )}
 
       <div className="control-group" style={{ marginBottom: 0 }}>
-        <label htmlFor="show-watermark-bet" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+        <label
+          htmlFor="show-watermark-bet"
+          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+        >
           <input
             id="show-watermark-bet"
             type="checkbox"
@@ -198,15 +435,15 @@ export function BetSlipMaker({
       </div>
 
       <div style={{ display: 'flex', gap: '8px', marginTop: '24px' }}>
-        <button 
-          onClick={onExport} 
+        <button
+          onClick={onExport}
           className="button-export"
           style={{ flex: 1 }}
         >
           📥 Export as PNG
         </button>
-        <button 
-          onClick={onCopyToClipboard} 
+        <button
+          onClick={onCopyToClipboard}
           className="button-export"
           style={{ flex: 1 }}
         >

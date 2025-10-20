@@ -1,4 +1,5 @@
 export type MarketType = 'binary' | 'multi';
+export type BetSlipMode = 'single' | 'parlay';
 
 export interface Outcome {
   id: string;
@@ -28,12 +29,22 @@ export interface DataPoint {
   [key: string]: string | number; // Allow dynamic outcome keys like value_outcome1, value_outcome2
 }
 
+export interface ParlayLeg {
+  id: string;
+  question: string;
+  answer: 'Yes' | 'No';
+  image: string | null;
+}
+
 export interface BetSlipConfig {
+  mode: BetSlipMode;
   title: string;
   image: string | null;
   wager: number;
   odds: number;
   answer: string;
+  answerColor: 'green' | 'red';
   showWatermark: boolean;
+  parlayOdds: number;
+  parlayLegs: ParlayLeg[];
 }
-

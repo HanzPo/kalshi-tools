@@ -17,12 +17,19 @@ function createFileName(title: string): string {
 export default function BetSlipBuilder() {
   const navigate = useNavigate();
   const [config, setConfig] = useState<BetSlipConfig>({
-    title: 'Will Republicans control the Senate after 2024?',
+    mode: 'single',
+    title: '',
     image: null,
     wager: 1000,
     odds: 65,
     answer: 'Yes',
+    answerColor: 'green',
     showWatermark: true,
+    parlayOdds: 400,
+    parlayLegs: [
+      { id: 'leg-1', question: '', answer: 'Yes', image: null },
+      { id: 'leg-2', question: '', answer: 'Yes', image: null },
+    ],
   });
 
   const [cropperImage, setCropperImage] = useState<string | null>(null);
