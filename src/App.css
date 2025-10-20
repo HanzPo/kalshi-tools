@@ -59,9 +59,9 @@
   }
 
   .preview-section {
-    padding: 30px 26px;
+    padding: 0;
     top: 24px;
-    border-radius: 26px;
+    border-radius: 0;
   }
 }
 
@@ -74,6 +74,8 @@
   .preview-section {
     position: static;
     width: 100%;
+    padding: 0;
+    border-radius: 0;
   }
 }
 
@@ -87,9 +89,8 @@
   }
 
   .preview-section {
-    padding: 24px 20px;
     gap: 20px;
-    border-radius: 22px;
+    top: auto;
   }
 }
 
