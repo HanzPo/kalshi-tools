@@ -1,11 +1,7 @@
+import { Link } from 'react-router-dom';
 import './LandingPage.css';
 
-interface LandingPageProps {
-  onSelectChart: () => void;
-  onSelectBetSlip: () => void;
-}
-
-export function LandingPage({ onSelectChart, onSelectBetSlip }: LandingPageProps) {
+export function LandingPage() {
   return (
     <div className="landing-page">
       <div className="landing-shell">
@@ -28,7 +24,7 @@ export function LandingPage({ onSelectChart, onSelectBetSlip }: LandingPageProps
         </header>
 
         <div className="landing-grid">
-          <button type="button" className="landing-option landing-option--chart" onClick={onSelectChart}>
+          <Link to="/chart" className="landing-option landing-option--chart">
             <div className="option-body">
               <div className="option-header">
                 <span className="option-icon" aria-hidden="true">
@@ -51,9 +47,9 @@ export function LandingPage({ onSelectChart, onSelectBetSlip }: LandingPageProps
               </p>
               <span className="option-cta">Open builder &rarr;</span>
             </div>
-          </button>
+          </Link>
 
-          <button type="button" className="landing-option landing-option--betslip" onClick={onSelectBetSlip}>
+          <Link to="/bet-slip" className="landing-option landing-option--betslip">
             <div className="option-body">
               <div className="option-header">
                 <span className="option-icon" aria-hidden="true">
@@ -74,7 +70,7 @@ export function LandingPage({ onSelectChart, onSelectBetSlip }: LandingPageProps
               </p>
               <span className="option-cta">Open builder &rarr;</span>
             </div>
-          </button>
+          </Link>
         </div>
 
         <footer className="landing-footer">
