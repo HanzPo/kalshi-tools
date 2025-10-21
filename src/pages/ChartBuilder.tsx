@@ -5,7 +5,7 @@ import { ControlPanel } from '../components/ControlPanel';
 import { ChartPreview } from '../components/ChartPreview';
 import { ImageCropper } from '../components/ImageCropper';
 import { TrendDrawer } from '../components/TrendDrawer';
-import { generateMarketData, generateVolume } from '../utils/dataGenerator';
+import { generateMarketData, generateVolume, getDateRangeForTimeHorizon } from '../utils/dataGenerator';
 import { decodeConfigFromUrl } from '../utils/urlEncoder';
 import { getOutcomeColor } from '../utils/colorGenerator';
 import { captureElementAsPng, copyDataUrlToClipboard, downloadDataUrl } from '../utils/imageExport';
@@ -58,6 +58,7 @@ export default function ChartBuilder() {
     ],
     startDate: getDefaultStartDate(),
     endDate: new Date(),
+    timeHorizon: 'ALL',
     showWatermark: true,
   });
 
@@ -89,7 +90,7 @@ export default function ChartBuilder() {
   useEffect(() => {
     regenerateData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.marketType]);
+  }, [config.marketType, config.timeHorizon]);
 
   useEffect(() => {
     if (config.marketType === 'multi') {
@@ -99,21 +100,26 @@ export default function ChartBuilder() {
   }, [config.outcomes.length]);
 
   function regenerateData() {
+    // Get date range based on time horizon
+    const { startDate, endDate } = config.timeHorizon === 'ALL' 
+      ? { startDate: config.startDate, endDate: config.endDate }
+      : getDateRangeForTimeHorizon(config.timeHorizon);
+
     if (config.marketType === 'binary') {
       if (!config.customTrendData) {
         const defaultTrend = generateDefaultTrend(config.currentOdds);
-        const newData = generateMarketData(config.currentOdds, config.volatility, defaultTrend, config.startDate, config.endDate);
+        const newData = generateMarketData(config.currentOdds, config.volatility, defaultTrend, startDate, endDate, config.timeHorizon);
         setData(newData);
       } else {
-        const newData = generateMarketData(config.currentOdds, config.volatility, config.customTrendData, config.startDate, config.endDate);
+        const newData = generateMarketData(config.currentOdds, config.volatility, config.customTrendData, startDate, endDate, config.timeHorizon);
         setData(newData);
       }
     } else {
-      const baseData = generateMarketData(50, config.volatility, generateDefaultTrend(50), config.startDate, config.endDate);
+      const baseData = generateMarketData(50, config.volatility, generateDefaultTrend(50), startDate, endDate, config.timeHorizon);
 
       config.outcomes.forEach((outcome) => {
         const trend = outcome.customTrendData || generateDefaultTrend(outcome.currentOdds);
-        const outcomeData = generateMarketData(outcome.currentOdds, config.volatility, trend, config.startDate, config.endDate);
+        const outcomeData = generateMarketData(outcome.currentOdds, config.volatility, trend, startDate, endDate, config.timeHorizon);
 
         outcomeData.forEach((point, index) => {
           if (baseData[index]) {
@@ -162,7 +168,10 @@ export default function ChartBuilder() {
         currentOdds: finalOdds,
       };
 
-      const newData = generateMarketData(finalOdds, updated.volatility, trendData, updated.startDate, updated.endDate);
+      const { startDate, endDate } = updated.timeHorizon === 'ALL' 
+        ? { startDate: updated.startDate, endDate: updated.endDate }
+        : getDateRangeForTimeHorizon(updated.timeHorizon);
+      const newData = generateMarketData(finalOdds, updated.volatility, trendData, startDate, endDate, updated.timeHorizon);
       setData(newData);
 
       return updated;
@@ -223,7 +232,14 @@ export default function ChartBuilder() {
           onBack={() => navigate('/')}
         />
         <div className="preview-section">
-          <ChartPreview config={config} data={data} />
+          <ChartPreview 
+            config={config} 
+            data={data} 
+            onTimeHorizonChange={(timeHorizon) => {
+              handleConfigChange({ timeHorizon: timeHorizon as any });
+              regenerateData();
+            }}
+          />
           <div className="attribution">
             <p>
               Built by{' '}

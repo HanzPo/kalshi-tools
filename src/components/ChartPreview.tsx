@@ -14,9 +14,10 @@ import './ChartPreview.css';
 interface ChartPreviewProps {
   config: MarketConfig;
   data: DataPoint[];
+  onTimeHorizonChange?: (timeHorizon: string) => void;
 }
 
-export function ChartPreview({ config, data }: ChartPreviewProps) {
+export function ChartPreview({ config, data, onTimeHorizonChange }: ChartPreviewProps) {
   const previewRef = useRef<HTMLDivElement>(null);
   
   const change = generateChange(data);
@@ -245,14 +246,15 @@ export function ChartPreview({ config, data }: ChartPreviewProps) {
           {formatVolume(config.volume)}
         </div>
         <div className="timeframes">
-          {['6H', '1D', '1W', '1M', 'ALL'].map((tf, i) => (
+          {['6H', '1D', '1W', '1M', 'ALL'].map((tf) => (
             <button
               key={tf}
               className="timeframe-button"
+              onClick={() => onTimeHorizonChange?.(tf)}
               style={{
-                color: i === 4 ? textColor : secondaryTextColor,
-                backgroundColor: i === 4 ? '#f3f4f6' : 'transparent',
-                fontWeight: i === 4 ? '600' : '500',
+                color: config.timeHorizon === tf ? textColor : secondaryTextColor,
+                backgroundColor: config.timeHorizon === tf ? '#f3f4f6' : 'transparent',
+                fontWeight: config.timeHorizon === tf ? '600' : '500',
               }}
             >
               {tf}

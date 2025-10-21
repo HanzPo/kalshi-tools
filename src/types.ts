@@ -1,5 +1,6 @@
 export type MarketType = 'binary' | 'multi';
 export type BetSlipMode = 'single' | 'parlay';
+export type TimeHorizon = '6H' | '1D' | '1W' | '1M' | 'ALL';
 
 export interface Outcome {
   id: string;
@@ -20,6 +21,7 @@ export interface MarketConfig {
   outcomes: Outcome[];
   startDate: Date;
   endDate: Date;
+  timeHorizon: TimeHorizon;
   showWatermark: boolean;
 }
 
