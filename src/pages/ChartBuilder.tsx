@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { MarketConfig, DataPoint } from '../types';
 import { ControlPanel } from '../components/ControlPanel';
@@ -66,6 +66,15 @@ export default function ChartBuilder() {
   const [cropperImage, setCropperImage] = useState<string | null>(null);
   const [showTrendDrawer, setShowTrendDrawer] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const configRef = useRef(config);
+
+  function updateConfig(updater: (prev: MarketConfig) => MarketConfig) {
+    setConfig((prev) => {
+      const next = updater(prev);
+      configRef.current = next;
+      return next;
+    });
+  }
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -74,7 +83,7 @@ export default function ChartBuilder() {
     if (sharedConfig) {
       decodeConfigFromUrl(sharedConfig)
         .then((decodedConfig) => {
-          setConfig((prev) => ({ ...prev, ...decodedConfig }));
+          updateConfig((prev) => ({ ...prev, ...decodedConfig }));
         })
         .catch((error) => {
           console.error('Failed to decode shared config:', error);
@@ -90,7 +99,7 @@ export default function ChartBuilder() {
   useEffect(() => {
     regenerateData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.marketType, config.timeHorizon]);
+  }, [config.marketType, config.timeHorizon, config.startDate, config.endDate]);
 
   useEffect(() => {
     if (config.marketType === 'multi') {
@@ -99,27 +108,28 @@ export default function ChartBuilder() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config.outcomes.length]);
 
-  function regenerateData() {
+  function regenerateData(sourceConfig: MarketConfig = configRef.current) {
+    const current = sourceConfig;
     // Get date range based on time horizon
-    const { startDate, endDate } = config.timeHorizon === 'ALL' 
-      ? { startDate: config.startDate, endDate: config.endDate }
-      : getDateRangeForTimeHorizon(config.timeHorizon);
+    const { startDate, endDate } = current.timeHorizon === 'ALL' 
+      ? { startDate: current.startDate, endDate: current.endDate }
+      : getDateRangeForTimeHorizon(current.timeHorizon, current.endDate);
 
-    if (config.marketType === 'binary') {
-      if (!config.customTrendData) {
-        const defaultTrend = generateDefaultTrend(config.currentOdds);
-        const newData = generateMarketData(config.currentOdds, config.volatility, defaultTrend, startDate, endDate, config.timeHorizon);
+    if (current.marketType === 'binary') {
+      if (!current.customTrendData) {
+        const defaultTrend = generateDefaultTrend(current.currentOdds);
+        const newData = generateMarketData(current.currentOdds, current.volatility, defaultTrend, startDate, endDate, current.timeHorizon);
         setData(newData);
       } else {
-        const newData = generateMarketData(config.currentOdds, config.volatility, config.customTrendData, startDate, endDate, config.timeHorizon);
+        const newData = generateMarketData(current.currentOdds, current.volatility, current.customTrendData, startDate, endDate, current.timeHorizon);
         setData(newData);
       }
     } else {
-      const baseData = generateMarketData(50, config.volatility, generateDefaultTrend(50), startDate, endDate, config.timeHorizon);
+      const baseData = generateMarketData(50, current.volatility, generateDefaultTrend(50), startDate, endDate, current.timeHorizon);
 
-      config.outcomes.forEach((outcome) => {
+      current.outcomes.forEach((outcome) => {
         const trend = outcome.customTrendData || generateDefaultTrend(outcome.currentOdds);
-        const outcomeData = generateMarketData(outcome.currentOdds, config.volatility, trend, startDate, endDate, config.timeHorizon);
+        const outcomeData = generateMarketData(outcome.currentOdds, current.volatility, trend, startDate, endDate, current.timeHorizon);
 
         outcomeData.forEach((point, index) => {
           if (baseData[index]) {
@@ -133,7 +143,7 @@ export default function ChartBuilder() {
   }
 
   function handleConfigChange(updates: Partial<MarketConfig>) {
-    setConfig((prev) => ({ ...prev, ...updates }));
+    updateConfig((prev) => ({ ...prev, ...updates }));
   }
 
   function handleImageUpload(file: File) {
@@ -146,7 +156,7 @@ export default function ChartBuilder() {
   }
 
   function handleCropComplete(croppedImage: string) {
-    setConfig((prev) => ({ ...prev, image: croppedImage }));
+    updateConfig((prev) => ({ ...prev, image: croppedImage }));
     setCropperImage(null);
   }
 
@@ -161,7 +171,7 @@ export default function ChartBuilder() {
   function handleTrendDrawComplete(trendData: number[]) {
     const finalOdds = Math.round(trendData[trendData.length - 1]);
 
-    setConfig((prev) => {
+    updateConfig((prev) => {
       const updated = {
         ...prev,
         customTrendData: trendData,
@@ -170,7 +180,7 @@ export default function ChartBuilder() {
 
       const { startDate, endDate } = updated.timeHorizon === 'ALL' 
         ? { startDate: updated.startDate, endDate: updated.endDate }
-        : getDateRangeForTimeHorizon(updated.timeHorizon);
+        : getDateRangeForTimeHorizon(updated.timeHorizon, updated.endDate);
       const newData = generateMarketData(finalOdds, updated.volatility, trendData, startDate, endDate, updated.timeHorizon);
       setData(newData);
 

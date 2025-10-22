@@ -8,7 +8,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { MarketConfig, DataPoint } from '../types';
-import { generateChange, formatVolume } from '../utils/dataGenerator';
+import { generateChange, formatVolume, getDateRangeForTimeHorizon, generateDateLabels } from '../utils/dataGenerator';
 import './ChartPreview.css';
 
 interface ChartPreviewProps {
@@ -30,8 +30,13 @@ export function ChartPreview({ config, data, onTimeHorizonChange }: ChartPreview
   const secondaryTextColor = '#6b7280';
   const gridColor = '#e5e7eb';
   
-  // Get unique dates for X-axis ticks (should be 6)
-  const uniqueDates = Array.from(new Set(data.map(d => d.time)));
+  const { startDate: axisStart, endDate: axisEnd } = config.timeHorizon === 'ALL'
+    ? { startDate: config.startDate, endDate: config.endDate }
+    : getDateRangeForTimeHorizon(config.timeHorizon, config.endDate);
+
+  const generatedLabels = generateDateLabels(axisStart, axisEnd, config.timeHorizon);
+  const xAxisTicks = generatedLabels.filter((label, index) => generatedLabels.indexOf(label) === index);
+  const axisKey = `${config.timeHorizon}-${axisStart.toISOString()}-${axisEnd.toISOString()}-${xAxisTicks.join('|')}`;
   
   return (
     <div
@@ -161,13 +166,14 @@ export function ChartPreview({ config, data, onTimeHorizonChange }: ChartPreview
               strokeWidth={1}
             />
             <XAxis
+              key={axisKey}
               dataKey="time"
               stroke="transparent"
               tick={{ fill: secondaryTextColor, fontSize: 13, dx: 20 }}
               axisLine={false}
               tickLine={false}
               tickMargin={10}
-              ticks={uniqueDates}
+              ticks={xAxisTicks}
               interval={0}
             />
             <YAxis

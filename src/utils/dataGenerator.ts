@@ -2,30 +2,33 @@ import { DataPoint, TimeHorizon } from '../types';
 
 const DATES_COUNT = 6;
 
-function getDateRangeForTimeHorizon(timeHorizon: TimeHorizon): { startDate: Date; endDate: Date } {
-  const now = new Date();
+function getDateRangeForTimeHorizon(
+  timeHorizon: TimeHorizon,
+  customEndDate?: Date
+): { startDate: Date; endDate: Date } {
+  const endDate = customEndDate ? new Date(customEndDate) : new Date();
   let startDate: Date;
   
   switch (timeHorizon) {
     case '6H':
-      startDate = new Date(now.getTime() - 6 * 60 * 60 * 1000); // 6 hours ago
+      startDate = new Date(endDate.getTime() - 6 * 60 * 60 * 1000); // 6 hours ago
       break;
     case '1D':
-      startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 1 day ago
+      startDate = new Date(endDate.getTime() - 24 * 60 * 60 * 1000); // 1 day ago
       break;
     case '1W':
-      startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 1 week ago
+      startDate = new Date(endDate.getTime() - 7 * 24 * 60 * 60 * 1000); // 1 week ago
       break;
     case '1M':
-      startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 1 month ago
+      startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000); // 1 month ago
       break;
     case 'ALL':
     default:
-      startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000); // 3 months ago
+      startDate = new Date(endDate.getTime() - 90 * 24 * 60 * 60 * 1000); // 3 months ago
       break;
   }
   
-  return { startDate, endDate: now };
+  return { startDate, endDate };
 }
 
 function generateDates(startDate: Date, endDate: Date, timeHorizon: TimeHorizon): string[] {
@@ -128,8 +131,10 @@ function applyMonteCarloToCustomTrend(
   
   // Convert to DataPoint format
   const dates = generateDates(startDate, endDate, timeHorizon);
+  const steps = Math.max(data.length - 1, 1);
   const dataPoints: DataPoint[] = data.map((value, i) => {
-    const dateIndex = Math.floor((i / data.length) * (DATES_COUNT - 1));
+    const rawIndex = (i / steps) * (DATES_COUNT - 1);
+    const dateIndex = Math.min(Math.floor(rawIndex), DATES_COUNT - 1);
     return {
       time: dates[Math.min(dateIndex, dates.length - 1)],
       value: Math.round(value * 10) / 10,
@@ -163,6 +168,10 @@ export function generateVolume(): number {
 }
 
 export { getDateRangeForTimeHorizon };
+
+export function generateDateLabels(startDate: Date, endDate: Date, timeHorizon: TimeHorizon): string[] {
+  return generateDates(startDate, endDate, timeHorizon);
+}
 
 export function formatVolume(volume: number): string {
   return `$${volume.toLocaleString()} vol`;
