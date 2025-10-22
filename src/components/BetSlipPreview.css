@@ -2,7 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: clamp(20px, 4vw, 40px);
+  padding: clamp(16px, 3vw, 32px);
   min-height: 100%;
   width: 100%;
 }
@@ -13,7 +13,7 @@
   max-width: 500px;
   background: linear-gradient(180deg, #00D395 0%, #00C688 100%);
   border-radius: clamp(16px, 3vw, 20px);
-  padding: clamp(24px, 4vw, 32px) 0 clamp(24px, 4vw, 36px);
+  padding: clamp(18px, 3vw, 24px) 0 clamp(18px, 3vw, 28px);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   overflow: visible;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
@@ -29,8 +29,8 @@
 .bet-slip-content {
   background: white;
   border-radius: clamp(8px, 2vw, 12px) clamp(8px, 2vw, 12px) 0 0;
-  margin: 0 clamp(12px, 3vw, 20px);
-  padding: clamp(20px, 4vw, 28px);
+  margin: 0 clamp(8px, 2vw, 16px);
+  padding: clamp(16px, 3vw, 22px);
   position: relative;
   /* Create scalloped transparent bottom edge by masking circles */
   /* Base full mask then subtract circular notches along the bottom */
@@ -53,8 +53,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: clamp(12px, 2vw, 16px);
-  padding-right: clamp(70px, 18vw, 96px);
+  gap: clamp(8px, 1.5vw, 12px);
+  padding-right: 0;
 }
 
 .bet-slip-question-copy {
@@ -67,7 +67,7 @@
   font-size: clamp(16px, 4vw, 20px);
   font-weight: 500;
   color: #4b5563;
-  margin: 0 0 clamp(6px, 1.5vw, 10px) 0;
+  margin: 0 0 clamp(4px, 1vw, 8px) 0;
   line-height: 1.35;
 }
 
@@ -75,7 +75,7 @@
   font-size: clamp(26px, 6vw, 38px);
   font-weight: 700;
   color: #111827;
-  margin: 0 0 clamp(12px, 3vw, 18px) 0;
+  margin: 0 0 clamp(8px, 2vw, 14px) 0;
   line-height: 1.15;
   word-break: break-word;
 }
@@ -98,14 +98,26 @@
   font-size: clamp(16px, 3.5vw, 20px);
   font-weight: 500;
   color: #00C688;
-  margin: 0 0 clamp(20px, 4vw, 32px) 0;
+  margin: 0 0 clamp(16px, 3vw, 24px) 0;
   line-height: 1.3;
 }
 
+.bet-slip-top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: clamp(12px, 2vw, 18px);
+  min-height: clamp(15px, 3vw, 20px);
+}
+
+.bet-slip-brand-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
 .bet-slip-brand {
-  position: absolute;
-  top: clamp(16px, 3vw, 24px);
-  right: clamp(16px, 3vw, 24px);
   display: inline-flex;
   color: #09C285;
   text-decoration: none;
@@ -120,7 +132,7 @@
 .bet-slip-details {
   display: flex;
   flex-direction: column;
-  gap: clamp(4px, 1vw, 8px);
+  gap: clamp(12px, 2vw, 18px);
 }
 
 .bet-slip-row {
@@ -144,8 +156,8 @@
 }
 
 .bet-slip-payout-row {
-  margin-top: clamp(4px, 1vw, 8px);
-  padding-top: clamp(8px, 1.5vw, 12px);
+  margin-top: 0;
+  padding-top: 0;
 }
 
 .bet-slip-payout {
@@ -159,7 +171,7 @@
 
 .bet-slip-watermark {
   position: absolute;
-  bottom: clamp(30px, 6vw, 50px);
+  bottom: clamp(25px, 5vw, 42px);
   right: clamp(16px, 3vw, 24px);
   font-size: clamp(8px, 1.5vw, 10px);
   color: rgba(0, 0, 0, 0.25);
@@ -181,19 +193,11 @@
   .bet-slip-container {
     padding: clamp(12px, 2vw, 16px);
   }
-  
-  .bet-slip-question {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
+
+  .bet-slip-top-section {
     gap: clamp(8px, 1.5vw, 12px);
   }
-  
-  .bet-slip-image-container {
-    align-self: flex-start;
-    margin-left: auto;
-  }
-  
+
   .bet-slip-image {
     width: clamp(50px, 10vw, 60px);
     height: clamp(50px, 10vw, 60px);
@@ -205,40 +209,29 @@
   .bet-slip-container {
     padding: 12px;
   }
-  
+
   .bet-slip-preview {
     width: 100%;
     max-width: 100%;
   }
-  
+
   .bet-slip-content {
     margin: 0 8px;
     padding: 16px;
   }
-  
-  .bet-slip-question {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  
-  .bet-slip-image-container {
-    margin-left: auto;
-  }
-  
+
   .bet-slip-image {
     width: 50px;
     height: 50px;
   }
-  
+
   .bet-slip-details {
-    gap: 8px;
+    gap: 12px;
   }
-  
+
   .bet-slip-payout-row {
-    margin-top: 8px;
-    padding-top: 12px;
+    margin-top: 0;
+    padding-top: 0;
   }
 }
 
@@ -247,22 +240,12 @@
   .bet-slip-container {
     padding: 8px;
   }
-  
+
   .bet-slip-content {
     margin: 0 6px;
     padding: 12px;
   }
-  
-  .bet-slip-question {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-  }
-  
-  .bet-slip-image-container {
-    margin-left: auto;
-  }
-  
+
   .bet-slip-image {
     width: 40px;
     height: 40px;
@@ -412,4 +395,3 @@
     gap: 6px;
   }
 }
-
