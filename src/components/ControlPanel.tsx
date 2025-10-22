@@ -1,6 +1,6 @@
 import { ChangeEvent, useState, DragEvent, useRef, useEffect } from 'react';
 import { HexColorPicker } from 'react-colorful';
-import { MarketConfig, MarketType, Outcome } from '../types';
+import { MarketConfig, MarketType, Outcome, TimeHorizon } from '../types';
 import { getOutcomeColor } from '../utils/colorGenerator';
 import './ControlPanel.css';
 
@@ -566,6 +566,41 @@ export function ControlPanel({
       </div>
 
       <div className="control-group">
+        <label>Time Horizon</label>
+        <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
+          {(['6H', '1D', '1W', '1M', 'ALL'] as TimeHorizon[]).map((horizon) => (
+            <button
+              key={horizon}
+              onClick={() => {
+                onConfigChange({ timeHorizon: horizon });
+                onRegenerateData();
+              }}
+              style={{
+                padding: '8px 12px',
+                border: '2px solid',
+                borderColor: config.timeHorizon === horizon ? '#09C285' : '#e5e7eb',
+                backgroundColor: config.timeHorizon === horizon ? '#ecfdf5' : 'white',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: config.timeHorizon === horizon ? '600' : '500',
+                color: config.timeHorizon === horizon ? '#09C285' : '#6b7280',
+                transition: 'all 0.2s',
+                fontSize: '14px',
+                minWidth: '50px',
+              }}
+            >
+              {horizon}
+            </button>
+          ))}
+        </div>
+        <p className="help-text">
+          {config.timeHorizon === 'ALL' 
+            ? 'Custom date range (use Advanced Settings)' 
+            : `Last ${config.timeHorizon === '6H' ? '6 hours' : config.timeHorizon === '1D' ? 'day' : config.timeHorizon === '1W' ? 'week' : 'month'}`}
+        </p>
+      </div>
+
+      <div className="control-group">
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
           style={{
@@ -621,22 +656,24 @@ export function ControlPanel({
             <p className="help-text">Enter amount (e.g., 528110)</p>
           </div>
 
-          <div className="control-group">
-            <label htmlFor="start-date">Start Date</label>
-            <input
-              id="start-date"
-              type="date"
-              className="text-input"
-              value={config.startDate.toISOString().split('T')[0]}
-              onChange={(e) => {
-                const newDate = new Date(e.target.value);
-                onConfigChange({ startDate: newDate });
-                onRegenerateData();
-              }}
-              max={config.endDate.toISOString().split('T')[0]}
-            />
-            <p className="help-text">Chart start date (default: 3 months ago)</p>
-          </div>
+          {config.timeHorizon === 'ALL' && (
+            <div className="control-group">
+              <label htmlFor="start-date">Start Date</label>
+              <input
+                id="start-date"
+                type="date"
+                className="text-input"
+                value={config.startDate.toISOString().split('T')[0]}
+                onChange={(e) => {
+                  const newDate = new Date(e.target.value);
+                  onConfigChange({ startDate: newDate });
+                  onRegenerateData();
+                }}
+                max={config.endDate.toISOString().split('T')[0]}
+              />
+              <p className="help-text">Chart start date (default: 3 months ago)</p>
+            </div>
+          )}
 
           <div className="control-group">
             <label htmlFor="end-date">End Date</label>

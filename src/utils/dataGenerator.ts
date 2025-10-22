@@ -1,8 +1,34 @@
-import { DataPoint } from '../types';
+import { DataPoint, TimeHorizon } from '../types';
 
 const DATES_COUNT = 6;
 
-function generateDates(startDate: Date, endDate: Date): string[] {
+function getDateRangeForTimeHorizon(timeHorizon: TimeHorizon): { startDate: Date; endDate: Date } {
+  const now = new Date();
+  let startDate: Date;
+  
+  switch (timeHorizon) {
+    case '6H':
+      startDate = new Date(now.getTime() - 6 * 60 * 60 * 1000); // 6 hours ago
+      break;
+    case '1D':
+      startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 1 day ago
+      break;
+    case '1W':
+      startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 1 week ago
+      break;
+    case '1M':
+      startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 1 month ago
+      break;
+    case 'ALL':
+    default:
+      startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000); // 3 months ago
+      break;
+  }
+  
+  return { startDate, endDate: now };
+}
+
+function generateDates(startDate: Date, endDate: Date, timeHorizon: TimeHorizon): string[] {
   const dates: string[] = [];
   
   // Calculate total milliseconds in the range
@@ -10,7 +36,45 @@ function generateDates(startDate: Date, endDate: Date): string[] {
   
   for (let i = 0; i < DATES_COUNT; i++) {
     const date = new Date(startDate.getTime() + (totalMs * i / (DATES_COUNT - 1)));
-    dates.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    
+    // Format dates based on time horizon
+    let formattedDate: string;
+    switch (timeHorizon) {
+      case '6H':
+        formattedDate = date.toLocaleTimeString('en-US', { 
+          hour: 'numeric', 
+          hour12: true 
+        });
+        break;
+      case '1D':
+        formattedDate = date.toLocaleTimeString('en-US', { 
+          hour: 'numeric', 
+          minute: '2-digit',
+          hour12: true 
+        });
+        break;
+      case '1W':
+        formattedDate = date.toLocaleDateString('en-US', { 
+          weekday: 'short',
+          day: 'numeric' 
+        });
+        break;
+      case '1M':
+        formattedDate = date.toLocaleDateString('en-US', { 
+          month: 'short', 
+          day: 'numeric' 
+        });
+        break;
+      case 'ALL':
+      default:
+        formattedDate = date.toLocaleDateString('en-US', { 
+          month: 'short', 
+          day: 'numeric' 
+        });
+        break;
+    }
+    
+    dates.push(formattedDate);
   }
   
   return dates;
@@ -28,7 +92,8 @@ function applyMonteCarloToCustomTrend(
   targetOdds: number,
   volatility: number,
   startDate: Date,
-  endDate: Date
+  endDate: Date,
+  timeHorizon: TimeHorizon
 ): DataPoint[] {
   const data: number[] = [];
   
@@ -62,7 +127,7 @@ function applyMonteCarloToCustomTrend(
   data[data.length - 1] = targetOdds;
   
   // Convert to DataPoint format
-  const dates = generateDates(startDate, endDate);
+  const dates = generateDates(startDate, endDate, timeHorizon);
   const dataPoints: DataPoint[] = data.map((value, i) => {
     const dateIndex = Math.floor((i / data.length) * (DATES_COUNT - 1));
     return {
@@ -79,11 +144,12 @@ export function generateMarketData(
   volatility: number = 1.5,
   customTrendData: number[] | null = null,
   startDate: Date = new Date(new Date().setMonth(new Date().getMonth() - 3)),
-  endDate: Date = new Date()
+  endDate: Date = new Date(),
+  timeHorizon: TimeHorizon = 'ALL'
 ): DataPoint[] {
   // Always use custom trend (or default if none provided)
   if (customTrendData && customTrendData.length > 0) {
-    return applyMonteCarloToCustomTrend(customTrendData, targetOdds, volatility, startDate, endDate);
+    return applyMonteCarloToCustomTrend(customTrendData, targetOdds, volatility, startDate, endDate, timeHorizon);
   }
   
   // If no custom data, return empty data (should not happen in normal flow)
@@ -95,6 +161,8 @@ export function generateVolume(): number {
   const max = 10000000;
   return Math.floor(Math.random() * (max - min) + min);
 }
+
+export { getDateRangeForTimeHorizon };
 
 export function formatVolume(volume: number): string {
   return `$${volume.toLocaleString()} vol`;
