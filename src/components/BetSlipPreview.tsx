@@ -7,13 +7,13 @@ interface BetSlipPreviewProps {
 
 function calculateSinglePayout(wager: number, odds: number): number {
   if (odds <= 0 || odds >= 100) return 0;
-  return Math.round((wager / (odds / 100)) * 100) / 100;
+  return Math.round(wager / (odds / 100));
 }
 
 function calculateAmericanPayout(wager: number, odds: number): number {
   if (!Number.isFinite(odds) || odds === 0) return 0;
   const fractionalReturn = odds > 0 ? odds / 100 : 100 / Math.abs(odds);
-  return Math.round((wager * (1 + fractionalReturn)) * 100) / 100;
+  return Math.round(wager * (1 + fractionalReturn));
 }
 
 function formatAmericanOdds(odds: number): string {
