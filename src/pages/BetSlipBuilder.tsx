@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BetSlipConfig } from '../types';
 import { BetSlipMaker } from '../components/BetSlipMaker';
@@ -40,14 +40,14 @@ export default function BetSlipBuilder() {
     setConfig((prev) => ({ ...prev, ...updates }));
   }
 
-  function handleImageUpload(file: File) {
+  const handleImageUpload = useCallback((file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result as string;
       setCropperImage(result);
     };
     reader.readAsDataURL(file);
-  }
+  }, []);
 
   function handleCropComplete(croppedImage: string) {
     setConfig((prev) => ({ ...prev, image: croppedImage }));
@@ -64,6 +64,23 @@ export default function BetSlipBuilder() {
       setToastMessage(null);
     }, 2000);
   }
+
+  useEffect(() => {
+    function handlePaste(event: ClipboardEvent) {
+      const items = Array.from(event.clipboardData?.items ?? []);
+      const imageItem = items.find((item) => item.type.startsWith('image/'));
+      if (!imageItem) return;
+
+      const file = imageItem.getAsFile();
+      if (!file) return;
+
+      event.preventDefault();
+      handleImageUpload(file);
+    }
+
+    window.addEventListener('paste', handlePaste);
+    return () => window.removeEventListener('paste', handlePaste);
+  }, [handleImageUpload]);
 
   async function handleExport() {
     const element = document.getElementById(BET_SLIP_PREVIEW_ID);

@@ -77,6 +77,23 @@ export function ControlPanel({
     }
   }
 
+  useEffect(() => {
+    function handlePaste(event: ClipboardEvent) {
+      const items = Array.from(event.clipboardData?.items ?? []);
+      const imageItem = items.find((item) => item.type.startsWith('image/'));
+      if (!imageItem) return;
+
+      const file = imageItem.getAsFile();
+      if (!file) return;
+
+      event.preventDefault();
+      onImageUpload(file);
+    }
+
+    window.addEventListener('paste', handlePaste);
+    return () => window.removeEventListener('paste', handlePaste);
+  }, [onImageUpload]);
+
   function handleMarketTypeChange(marketType: MarketType) {
     if (marketType === 'multi' && config.outcomes.length === 0) {
       // Initialize with 2 default outcomes that sum to 100
@@ -326,7 +343,7 @@ export function ControlPanel({
             )}
           </label>
         </div>
-        <p className="help-text">Supports JPG, PNG formats</p>
+        <p className="help-text">Supports JPG, PNG formats. Or press Ctrl+V to paste.</p>
       </div>
 
       <div className="control-group">

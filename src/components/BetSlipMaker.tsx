@@ -265,7 +265,7 @@ export function BetSlipMaker({
                 )}
               </label>
             </div>
-            <p className="help-text">Supports JPG, PNG formats</p>
+            <p className="help-text">Supports JPG, PNG formats. Or press Ctrl+V to paste.</p>
           </div>
         </>
       ) : (
