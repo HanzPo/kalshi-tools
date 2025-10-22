@@ -71,6 +71,12 @@
   line-height: 1.35;
 }
 
+.bet-slip-market-name-large {
+  font-size: clamp(20px, 5vw, 28px);
+  font-weight: 600;
+  margin: 0 0 clamp(8px, 2vw, 14px) 0;
+}
+
 .bet-slip-outcome {
   font-size: clamp(26px, 6vw, 38px);
   font-weight: 700;

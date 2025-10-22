@@ -37,7 +37,7 @@ export function BetSlipPreview({ config }: BetSlipPreviewProps) {
 
   const marketName = (config.marketName?.trim() || config.title.trim())
     || 'Market name goes here';
-  const outcome = config.outcome?.trim() || 'Outcome goes here';
+  const outcome = config.outcome?.trim() || '';
   const tradeColor = config.tradeSide === 'No' ? '#d91616' : '#00C688';
 
   return (
@@ -164,8 +164,12 @@ export function BetSlipPreview({ config }: BetSlipPreviewProps) {
 
               <div className="bet-slip-question">
                 <div className="bet-slip-question-copy">
-                  <div className="bet-slip-market-name">{marketName}</div>
-                  <div className="bet-slip-outcome">{outcome}</div>
+                  <div 
+                    className={`bet-slip-market-name${!outcome ? ' bet-slip-market-name-large' : ''}`}
+                  >
+                    {marketName}
+                  </div>
+                  {outcome && <div className="bet-slip-outcome">{outcome}</div>}
                   <div
                     className="bet-slip-answer"
                     style={{ color: tradeColor }}
