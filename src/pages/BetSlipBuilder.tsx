@@ -19,11 +19,12 @@ export default function BetSlipBuilder() {
   const [config, setConfig] = useState<BetSlipConfig>({
     mode: 'single',
     title: '',
+    marketName: '',
+    outcome: '',
     image: null,
     wager: 1000,
     odds: 65,
-    answer: 'Yes',
-    answerColor: 'green',
+    tradeSide: 'Yes',
     showWatermark: true,
     parlayOdds: 400,
     parlayLegs: [
@@ -70,7 +71,13 @@ export default function BetSlipBuilder() {
 
     try {
       const dataUrl = await captureElementAsPng(element);
-      downloadDataUrl(dataUrl, createFileName(config.title));
+      const outcomeName = config.outcome?.trim();
+      const marketName = config.marketName?.trim();
+      const titleName = config.title?.trim();
+      const nameSource = config.mode === 'single'
+        ? (outcomeName || marketName || titleName || 'bet-slip')
+        : (titleName || 'bet-slip');
+      downloadDataUrl(dataUrl, createFileName(nameSource));
     } catch (error) {
       console.error('Error exporting image:', error);
       alert('Failed to export image. Please try again.');

@@ -13,29 +13,22 @@
   max-width: 500px;
   background: linear-gradient(180deg, #00D395 0%, #00C688 100%);
   border-radius: clamp(16px, 3vw, 20px);
-  padding: 0 0 clamp(24px, 4vw, 36px) 0; 
+  padding: clamp(24px, 4vw, 32px) 0 clamp(24px, 4vw, 36px);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   overflow: visible;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   --d: clamp(8px, 1.5vw, 10px);
 }
 
-.bet-slip-header {
-  padding: clamp(16px, 3vw, 24px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .bet-slip-logo {
   width: clamp(60px, 10vw, 80px);
   height: auto;
-  color: #000000;
+  color: inherit;
 }
 
 .bet-slip-content {
   background: white;
-  border-radius: clamp(8px, 2vw, 12px);
+  border-radius: clamp(8px, 2vw, 12px) clamp(8px, 2vw, 12px) 0 0;
   margin: 0 clamp(12px, 3vw, 20px);
   padding: clamp(20px, 4vw, 28px);
   position: relative;
@@ -58,29 +51,39 @@
 
 .bet-slip-question {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: flex-start;
-  justify-content: space-between;
   gap: clamp(12px, 2vw, 16px);
+  padding-right: clamp(70px, 18vw, 96px);
 }
 
-.bet-slip-question > div:first-child {
+.bet-slip-question-copy {
   flex: 1;
-  min-width: 0; /* Allow text to wrap and shrink */
+  min-width: 0;
+  width: 100%;
 }
 
-.bet-slip-question h2 {
-  font-size: clamp(20px, 5vw, 32px);
-  font-weight: 600;
-  color: #1a1a1a;
-  margin: 0 0 clamp(12px, 2vw, 16px) 0;
-  line-height: 1.2;
+.bet-slip-market-name {
+  font-size: clamp(16px, 4vw, 20px);
+  font-weight: 500;
+  color: #4b5563;
+  margin: 0 0 clamp(6px, 1.5vw, 10px) 0;
+  line-height: 1.35;
+}
+
+.bet-slip-outcome {
+  font-size: clamp(26px, 6vw, 38px);
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 clamp(12px, 3vw, 18px) 0;
+  line-height: 1.15;
+  word-break: break-word;
 }
 
 .bet-slip-image-container {
   flex-shrink: 0;
   align-self: flex-start;
-  margin-left: auto;
+  margin: 0 0 clamp(8px, 1.5vw, 12px) 0;
 }
 
 .bet-slip-image {
@@ -92,11 +95,26 @@
 }
 
 .bet-slip-answer {
-  font-size: clamp(18px, 4vw, 24px);
-  font-weight: 400;
+  font-size: clamp(16px, 3.5vw, 20px);
+  font-weight: 500;
   color: #00C688;
-  margin: clamp(6px, 1vw, 8px) 0 clamp(20px, 4vw, 32px) 0;
+  margin: 0 0 clamp(20px, 4vw, 32px) 0;
   line-height: 1.3;
+}
+
+.bet-slip-brand {
+  position: absolute;
+  top: clamp(16px, 3vw, 24px);
+  right: clamp(16px, 3vw, 24px);
+  display: inline-flex;
+  color: #09C285;
+  text-decoration: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.bet-slip-brand:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
 }
 
 .bet-slip-details {

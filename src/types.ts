@@ -41,11 +41,12 @@ export interface ParlayLeg {
 export interface BetSlipConfig {
   mode: BetSlipMode;
   title: string;
+  marketName: string;
+  outcome: string;
   image: string | null;
   wager: number;
   odds: number;
-  answer: string;
-  answerColor: 'green' | 'red';
+  tradeSide: 'Yes' | 'No';
   showWatermark: boolean;
   parlayOdds: number;
   parlayLegs: ParlayLeg[];

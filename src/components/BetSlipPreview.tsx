@@ -35,7 +35,10 @@ export function BetSlipPreview({ config }: BetSlipPreviewProps) {
       ? 'Parlay'
       : 'Untitled Bet Slip';
 
-  const answerColor = config.answerColor === 'red' ? '#d91616' : '#00C688';
+  const marketName = (config.marketName?.trim() || config.title.trim())
+    || 'Market name goes here';
+  const outcome = config.outcome?.trim() || 'Outcome goes here';
+  const tradeColor = config.tradeSide === 'No' ? '#d91616' : '#00C688';
 
   return (
     <div className="bet-slip-container">
@@ -96,11 +99,12 @@ export function BetSlipPreview({ config }: BetSlipPreviewProps) {
           </div>
         ) : (
           <>
-            <div className="bet-slip-header">
+            <div className="bet-slip-content">
               <a
                 href="https://kalshi.com/?utm_source=kalshitools"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="bet-slip-brand"
               >
                 <svg
                   width="78"
@@ -144,19 +148,8 @@ export function BetSlipPreview({ config }: BetSlipPreviewProps) {
                   ></path>
                 </svg>
               </a>
-            </div>
 
-            <div className="bet-slip-content">
               <div className="bet-slip-question">
-                <div>
-                  <h2>{title}</h2>
-                  <div
-                    className="bet-slip-answer"
-                    style={{ color: answerColor }}
-                  >
-                    {config.answer}
-                  </div>
-                </div>
                 {config.image && (
                   <div className="bet-slip-image-container">
                     <img
@@ -166,6 +159,16 @@ export function BetSlipPreview({ config }: BetSlipPreviewProps) {
                     />
                   </div>
                 )}
+                <div className="bet-slip-question-copy">
+                  <div className="bet-slip-market-name">{marketName}</div>
+                  <div className="bet-slip-outcome">{outcome}</div>
+                  <div
+                    className="bet-slip-answer"
+                    style={{ color: tradeColor }}
+                  >
+                    I traded {config.tradeSide}
+                  </div>
+                </div>
               </div>
 
               <div className="bet-slip-details">

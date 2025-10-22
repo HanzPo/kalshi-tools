@@ -36,6 +36,8 @@ function calculateAmericanPayout(wager: number, odds: number): number {
   return Math.round((wager * (1 + fractionalReturn)) * 100) / 100;
 }
 
+const BRAND_GREEN = '#09C285';
+
 export function BetSlipMaker({
   config,
   onConfigChange,
@@ -164,59 +166,53 @@ export function BetSlipMaker({
         </div>
       </div>
 
-      <div className="control-group">
-        <label htmlFor="bet-title">
-          {isSingleMode ? 'Question' : 'Slip Title'}
-        </label>
-        <input
-          id="bet-title"
-          type="text"
-          className="text-input"
-          placeholder={
-            isSingleMode
-              ? 'e.g., Will Democrats win the 2024 Presidential Election?'
-              : 'e.g., Sunday Night Parlay'
-          }
-          value={config.title}
-          onChange={(e) => onConfigChange({ title: e.target.value })}
-        />
-      </div>
-
       {isSingleMode ? (
         <>
           <div className="control-group">
-            <label htmlFor="bet-answer">Answer</label>
+            <label htmlFor="bet-market-name">Market Name</label>
             <input
-              id="bet-answer"
+              id="bet-market-name"
               type="text"
               className="text-input"
-              placeholder="e.g., yes"
-              value={config.answer}
-              onChange={(e) => onConfigChange({ answer: e.target.value })}
+              placeholder="e.g., Bitcoin price today at 6pm EDT?"
+              value={config.marketName}
+              onChange={(e) => onConfigChange({ marketName: e.target.value })}
             />
           </div>
 
           <div className="control-group">
-            <label>Answer Color</label>
-            <div className="color-toggle">
-              <button
-                type="button"
-                className={`color-option color-option-green${config.answerColor === 'green' ? ' active' : ''}`}
-                onClick={() => onConfigChange({ answerColor: 'green' })}
-                aria-pressed={config.answerColor === 'green'}
-              >
-                <span className="color-swatch color-green" aria-hidden="true"></span>
-                Green
-              </button>
-              <button
-                type="button"
-                className={`color-option color-option-red${config.answerColor === 'red' ? ' active' : ''}`}
-                onClick={() => onConfigChange({ answerColor: 'red' })}
-                aria-pressed={config.answerColor === 'red'}
-              >
-                <span className="color-swatch color-red" aria-hidden="true"></span>
-                Red
-              </button>
+            <label htmlFor="bet-outcome">Outcome</label>
+            <input
+              id="bet-outcome"
+              type="text"
+              className="text-input"
+              placeholder="e.g., $111,000 or above"
+              value={config.outcome}
+              onChange={(e) => onConfigChange({ outcome: e.target.value })}
+            />
+          </div>
+
+          <div className="control-group">
+            <label>Trade Side</label>
+            <div className="segmented-control">
+              {(['Yes', 'No'] as const).map((side) => {
+                const sideColor = side === 'Yes' ? '#0f9b6c' : '#d91616';
+                return (
+                  <button
+                    key={side}
+                    type="button"
+                    className={`segmented-option${config.tradeSide === side ? ' active' : ''}`}
+                    onClick={() => onConfigChange({ tradeSide: side })}
+                    aria-pressed={config.tradeSide === side}
+                    style={{
+                      color: sideColor,
+                      fontWeight: config.tradeSide === side ? 600 : 500,
+                    }}
+                  >
+                    {side}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -227,7 +223,7 @@ export function BetSlipMaker({
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               style={{
-                border: `2px dashed ${isDragging ? '#09C285' : '#d1d5db'}`,
+                border: `2px dashed ${isDragging ? BRAND_GREEN : '#d1d5db'}`,
                 borderRadius: '8px',
                 padding: '12px',
                 textAlign: 'center',
@@ -250,7 +246,7 @@ export function BetSlipMaker({
                 style={{
                   cursor: 'pointer',
                   display: 'block',
-                  color: isDragging ? '#09C285' : '#6b7280',
+                  color: isDragging ? BRAND_GREEN : '#6b7280',
                   fontWeight: '500',
                   fontSize: '14px',
                   lineHeight: '1.5'
@@ -273,6 +269,20 @@ export function BetSlipMaker({
           </div>
         </>
       ) : (
+        <div className="control-group">
+          <label htmlFor="bet-title">Slip Title</label>
+          <input
+            id="bet-title"
+            type="text"
+            className="text-input"
+            placeholder="e.g., Sunday Night Parlay"
+            value={config.title}
+            onChange={(e) => onConfigChange({ title: e.target.value })}
+          />
+        </div>
+      )}
+
+      {!isSingleMode && (
         <div className="control-group">
           <label aria-hidden="true">Parlay Legs</label>
           <div className="parlay-legs">
@@ -426,7 +436,7 @@ export function BetSlipMaker({
               width: '18px',
               height: '18px',
               cursor: 'pointer',
-              accentColor: '#09C285',
+              accentColor: BRAND_GREEN,
             }}
           />
           <span>Show Watermark</span>
